@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q-Pulse Quantum Sensor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700&family=STIX+Two+Text:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a calm, precise quantum lab that judges can read at a glance.
+   IDEA: a cryostat control room: glass instrument panels over deep navy, every panel a live instrument.
+   PICTURE: the tilted-washboard energy well with its glowing wave packet, travelling waves and scope traces.
+   COLOUR and TYPE: navy field, cyan for quantum, amber for structural vibration, red only for alerts; Sora, Inter, JetBrains Mono.
+   LAYOUT: fixed glowing nav, five routed pages that scroll, each ending in a hand-off to the next. */
+:root{color-scheme:dark;--bg:#040916;--ink:#eaf2ff;--mut:#a6b6d3;--line:rgba(150,200,255,.17);--cy:#39e6ff;--cy2:#a8f6ff;--am:#ffb52e;--am2:#ffdc93;--rd:#ff5270;--vi:#b3beff;--nav:64px;--hd:Sora,system-ui,sans-serif;--bd:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--mo:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:84px;background:var(--bg)}
+body{margin:0;color:var(--ink);font:16.5px/1.6 var(--bd);overflow-x:clip;-webkit-font-smoothing:antialiased}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(1100px 560px at 85% -8%,rgba(57,230,255,.17),transparent 62%),radial-gradient(900px 520px at -12% 38%,rgba(255,181,46,.08),transparent 60%),radial-gradient(1000px 700px at 60% 112%,rgba(90,120,255,.16),transparent 60%),#040916}
+#bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(140,190,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(140,190,255,.06) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 75%)}
+main,.foot{position:relative;z-index:1}
+
+h1,h2,h3{font-family:var(--hd);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.05;font-weight:700}
+h2{font-size:clamp(25px,3.2vw,36px);line-height:1.12;font-weight:700;margin-bottom:14px}
+h3{font-size:19px;line-height:1.25;font-weight:600}
+p{margin:0 0 14px;max-width:68ch}
+a{color:inherit}
+button{font-family:inherit}
+.lead{font-size:clamp(17px,1.5vw,19px);color:#cfdcf3}
+.mut{color:var(--mut)}.sm{font-size:13.5px}
+.num{font-family:var(--mo);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cy{color:var(--cy2)}.am{color:var(--am2)}
+:focus-visible{outline:2px solid var(--cy2);outline-offset:2px}
+
+/* nav */
+header{position:fixed;inset:0 0 auto;height:var(--nav);z-index:50;display:flex;align-items:center;gap:12px;padding:0 max(3vw,12px);background:rgba(4,10,26,.76);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid rgba(57,230,255,.5);box-shadow:0 0 30px rgba(57,230,255,.24),0 10px 30px -18px #000}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;font:700 18px var(--hd);flex:none;min-height:44px}
+.brand svg{width:30px;height:30px;filter:drop-shadow(0 0 6px rgba(57,230,255,.75))}
+#nav{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none;padding:8px 4px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent)}
+#nav::-webkit-scrollbar{display:none}
+#nav a{flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 13px;border-radius:11px;text-decoration:none;font:500 14.5px var(--bd);color:#c4d3ee;white-space:nowrap;transition:background .25s,color .25s,box-shadow .25s}
+#nav a:hover{color:#fff;background:rgba(140,190,255,.1)}
+#nav a.on{color:#02131c;background:linear-gradient(180deg,#a8f6ff,#39e6ff);box-shadow:0 0 18px rgba(57,230,255,.7);font-weight:600}
+.pill{flex:none;display:none;align-items:center;gap:8px;min-height:36px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:rgba(150,190,255,.07);font:500 13px var(--bd);color:#cfe0fb;text-decoration:none;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cy);box-shadow:0 0 10px var(--cy)}
+@media(min-width:1120px){.pill{display:inline-flex}}
+@media(max-width:480px){.brand b{display:none}}
+#prog{position:fixed;top:var(--nav);left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--cy),var(--am));z-index:51;box-shadow:0 0 12px rgba(57,230,255,.8)}
+#wipe{position:fixed;inset:var(--nav) 0 0;z-index:45;pointer-events:none;background:linear-gradient(100deg,transparent 30%,rgba(57,230,255,.14) 47%,rgba(168,246,255,.5) 50%,rgba(57,230,255,.14) 53%,transparent 70%);transform:translateX(-100%)}
+#wipe.go{animation:wipe .7s cubic-bezier(.5,0,.2,1)}
+@keyframes wipe{to{transform:translateX(100%)}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;z-index:60;padding:12px 18px;border-radius:12px;background:rgba(4,12,30,.94);border:1px solid var(--cy);color:var(--cy2);font:600 14.5px var(--bd);box-shadow:0 0 30px -6px rgba(57,230,255,.7);transition:opacity .3s,transform .3s;pointer-events:none;max-width:calc(100vw - 28px);text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* pages */
+.page{display:none;padding-top:var(--nav)}
+.page.on{display:block;animation:pin .55s cubic-bezier(.2,.7,.2,1)}
+.page.on.out{animation:pout .18s ease-in forwards}
+@keyframes pin{from{opacity:0;transform:translateY(20px)}}
+@keyframes pout{to{opacity:0;transform:translateY(-10px)}}
+.band{padding:clamp(40px,6vw,84px) max(5vw,16px)}
+.wrap{max-width:1180px;margin-inline:auto}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(22px,4vw,56px);align-items:center}
+.two.flip>:first-child{order:2}
+@media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}.two.flip>:first-child{order:0}}
+.glass{background:linear-gradient(180deg,rgba(150,190,255,.10),rgba(120,160,255,.04));border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 50px -30px #000,inset 0 1px 0 rgba(255,255,255,.07)}
+.pad{padding:clamp(16px,2.4vw,26px)}
+[data-rv]{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+[data-rv].in{opacity:1;transform:none}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;border:1px solid rgba(255,181,46,.55);background:rgba(255,181,46,.1);color:var(--am2);font:600 13.5px var(--bd);margin-bottom:18px}
+.badge svg{width:18px;height:18px;flex:none}
+.badge .bx{color:#d9c79f;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:rgba(150,190,255,.07);font:500 13px var(--bd);color:#d5e3fb;white-space:nowrap}
+.chip.c{border-color:rgba(57,230,255,.5);color:var(--cy2)}.chip.a{border-color:rgba(255,181,46,.5);color:var(--am2)}.chip.r{border-color:rgba(255,82,112,.6);color:#ffc1cc}
+.tag{margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:12px;border:1px solid transparent;font:600 15.5px var(--bd);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .25s,background .25s,border-color .25s;color:var(--ink);background:none}
+.btn:hover{transform:translateY(-1px)}
+.btn.pri{background:linear-gradient(180deg,#a8f6ff,#39e6ff);color:#02131c;box-shadow:0 0 22px rgba(57,230,255,.55)}
+.btn.sec{border-color:rgba(57,230,255,.55);background:rgba(57,230,255,.07)}
+.btn.amb{border-color:rgba(255,181,46,.55);background:rgba(255,181,46,.08);color:var(--am2)}
+.btn.amb[aria-pressed=true]{background:linear-gradient(180deg,#ffdc93,#ffb52e);color:#231400;box-shadow:0 0 20px rgba(255,181,46,.55)}
+.btn.red{background:linear-gradient(180deg,#ff8ea2,#ff5270);color:#22030a}
+.btn[disabled]{opacity:.38;cursor:not-allowed;transform:none}
+.btn.k{min-height:44px;padding:0 13px;font-size:14px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:none;margin:0;cursor:pointer;--c:var(--cy)}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--c),rgba(150,200,255,.2))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;margin-top:-9px;background:#eaf9ff;border:3px solid var(--c);box-shadow:0 0 14px var(--c)}
+input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:rgba(150,200,255,.25)}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:#eaf9ff;border:3px solid var(--c);box-shadow:0 0 14px var(--c)}
+.next{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 26px;text-decoration:none;transition:border-color .25s,box-shadow .25s}
+.next:hover{border-color:rgba(57,230,255,.6);box-shadow:0 0 34px -8px rgba(57,230,255,.5)}
+.next b{display:block;font:700 clamp(20px,2.6vw,30px)/1.15 var(--hd)}
+.next .ar{font-size:30px;color:var(--cy);flex:none}
+.fig{position:relative;min-height:280px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:rgba(4,10,24,.62)}
+.fig>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.seg{display:inline-flex;padding:4px;border-radius:13px;border:1px solid var(--line);background:rgba(150,190,255,.06);gap:4px;flex-wrap:wrap}
+.seg button{min-height:42px;padding:0 14px;border-radius:9px;border:0;background:none;color:#c9d7f0;font:600 14.5px var(--bd);cursor:pointer}
+.seg button[aria-pressed=true]{background:linear-gradient(180deg,#a8f6ff,#39e6ff);color:#02131c;box-shadow:0 0 14px rgba(57,230,255,.5)}
+.seg button[disabled]{opacity:.4;cursor:not-allowed}
+.ctl{display:grid;gap:2px;margin-top:12px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font:500 14.5px var(--bd);color:#d5e3fb}
+.ctl output{font:700 15.5px var(--mo);white-space:nowrap;flex:none}
+.verdict{margin:12px 0 0;padding:10px 14px;border-radius:12px;border:1px solid var(--line);font-size:15px;max-width:none}
+.verdict.ok{border-color:rgba(57,230,255,.6);background:rgba(57,230,255,.09);color:var(--cy2)}
+.verdict.no{border-color:rgba(255,181,46,.5);background:rgba(255,181,46,.07);color:var(--am2)}
+.verdict.bad{border-color:rgba(255,82,112,.6);background:rgba(255,82,112,.09);color:#ffc7d0}
+
+/* home */
+.hero{min-height:calc(100svh - var(--nav));display:grid;grid-template-rows:auto minmax(300px,1fr)}
+.hero-copy{padding:clamp(24px,4vw,54px) max(5vw,16px) 10px;max-width:1280px;width:100%;margin-inline:auto}
+.hero-copy h1{max-width:23ch}
+.hero-copy .lead{max-width:74ch;margin:14px 0 0}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.scene{position:relative;overflow:hidden}
+.scene>svg{position:absolute;bottom:0;left:50%;height:100%;width:auto;aspect-ratio:1200/474;transform:translateX(-50%);overflow:visible;max-width:none}
+.hud{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 28px);padding:8px 16px;border-radius:12px;font:500 14px/1.35 var(--bd);background:rgba(4,10,26,.82);border:1px solid rgba(255,181,46,.55);color:var(--am2);text-align:center;transition:border-color .3s,color .3s}
+.hud[data-s="1"]{border-color:rgba(57,230,255,.65);color:var(--cy2)}
+.hud[data-s="2"]{border-color:rgba(255,82,112,.75);color:#ffd0d8}
+.scene .bld{fill:#0b1730;stroke:rgba(140,190,255,.2)}
+.scene .lbl{font:500 19px var(--bd);fill:#b9c9e6}
+@media(max-width:760px){.scene .lbl{display:none}}
+.noise path{fill:none;stroke:rgba(255,181,46,.2);stroke-width:2;animation:drift 11s linear infinite}
+.noise path+path{animation-duration:17s;stroke:rgba(255,181,46,.13)}
+@keyframes drift{to{transform:translateX(300px)}}
+.hot{cursor:pointer;outline:none}
+.hot .hit{fill:transparent}
+.hot .ring{fill:rgba(255,181,46,.16);stroke:var(--am);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:beat 1.8s ease-in-out infinite}
+.hot:hover .ring,.hot:focus-visible .ring{fill:rgba(255,181,46,.45)}
+.hot .crk{fill:none;stroke:#fff3d6;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes beat{50%{transform:scale(1.35);opacity:.6}}
+.rip{fill:none;stroke:var(--am);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.sys.fire .rip{animation:rip 1.3s ease-out 2}
+.sys.fire .rip.r2{animation-delay:.22s}.sys.fire .rip.r3{animation-delay:.44s}
+@keyframes rip{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(7)}}
+.lnk{fill:none;stroke-width:2;stroke-dasharray:5 8;opacity:.14;animation:dash 1s linear infinite;transition:opacity .35s}
+.lnk.a{stroke:var(--am)}.lnk.b{stroke:var(--cy)}
+@keyframes dash{to{stroke-dashoffset:-26}}
+.sys.fire .lnk.a{opacity:1}.sys.fire .lnk.b{opacity:1;transition-delay:.9s}
+.node{fill:#062236;stroke:var(--cy);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{stroke:#eaffff;fill:#0b3b55}}
+.sys.fire .node{animation:pop .5s .8s 3}
+@keyframes pop{50%{transform:scale(1.9);fill:#39e6ff}}
+.rx{fill:none;stroke:var(--cy);stroke-width:2;opacity:.25}
+.scene.alert .rx{animation:rxp .5s 4}
+@keyframes rxp{50%{opacity:1;stroke:#ff8097}}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:26px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:26px}
+@media(max-width:980px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.grid3{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.grid4{grid-template-columns:minmax(0,1fr)}}
+.idea p{margin:8px 0 0;color:#cddbf3;font-size:15.5px}
+.mw{display:block;width:100%;height:56px;margin-bottom:12px;overflow:hidden}
+.mw path{fill:none;stroke-width:2.4;vector-effect:non-scaling-stroke;animation:mwv linear infinite}
+@keyframes mwv{to{transform:translateX(var(--wl))}}
+.statement p{max-width:1100px;margin:0 auto;font:700 clamp(28px,5vw,60px)/1.08 var(--hd);letter-spacing:-.03em;text-wrap:balance}
+.statement .w{display:inline-block;opacity:.14;transition:opacity .5s}
+.statement .w.on{opacity:1}
+.xcard{display:flex;flex-direction:column;gap:10px;padding:20px;text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s;min-height:100%}
+.xcard:hover{transform:translateY(-4px);border-color:rgba(57,230,255,.6);box-shadow:0 0 30px -6px rgba(57,230,255,.45)}
+.xcard svg{width:46px;height:46px;stroke:var(--cy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.xcard p{margin:0;color:var(--mut);font-size:15px}
+.xcard .go{margin-top:auto;color:var(--cy2);font-weight:600;font-size:14.5px}
+
+/* science */
+.jx{width:100%;height:auto;display:block}
+.cp{fill:var(--cy2);animation:cp 4.4s linear infinite}
+@keyframes cp{from{transform:translate(28px,var(--y))}to{transform:translate(482px,var(--y))}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--mut);margin-top:12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ruler{position:relative;height:92px;margin:6px 0 4px}
+.ruler .ax{position:absolute;left:0;right:0;top:42px;height:8px;border-radius:8px;background:rgba(150,190,255,.18)}
+.ruler .bn{position:absolute;top:36px;height:20px;border-radius:6px}
+.ruler .tk{position:absolute;top:64px;font:500 12px var(--mo);color:var(--mut);transform:translateX(-50%);white-space:nowrap}
+.ruler .tk.l{transform:none}.ruler .tk.r{transform:translateX(-100%)}
+.ruler .lb{position:absolute;top:6px;font:600 13.5px var(--bd);white-space:nowrap}
+.ruler .mk{position:absolute;top:30px;width:4px;height:32px;border-radius:3px;background:#fff;box-shadow:0 0 12px #fff;transform:translateX(-50%)}
+.sum{font:700 clamp(15px,2.3vw,20px) var(--mo);margin-top:8px;color:#eaffff;overflow-wrap:anywhere}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}
+@media(max-width:700px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs p{margin:8px 0 0;color:#cddbf3}
+
+/* walkthrough */
+.wt-track{position:relative;height:calc(100svh - var(--nav) + 7*72vh)}
+.wt-stage{position:sticky;top:var(--nav);height:calc(100svh - var(--nav));display:grid;grid-template-columns:minmax(290px,370px) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:12px max(2.4vw,12px)}
+.wt-fig{grid-column:2;grid-row:1;position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:rgba(4,9,22,.7)}
+.wt-fig canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.wt-cap{grid-column:1;grid-row:1;align-self:center;padding:20px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.wt-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.wt-top h1{font:600 13.5px var(--bd);letter-spacing:0;color:var(--mut)}
+.wt-n{font:700 14px var(--mo);color:var(--cy2);margin-bottom:6px}
+.wt-body h2{font-size:clamp(23px,2.6vw,31px);margin-bottom:10px}
+.wt-body p{color:#d5e3fb;font-size:16px;margin-bottom:14px}
+.wt-body.swp{animation:capin .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes capin{from{opacity:0;transform:translateY(12px)}}
+.wt-tip{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+@media(max-width:900px){.wt-tip{display:none}}
+.auto{position:relative;min-height:44px;padding:0 14px;font-size:14px;overflow:hidden}
+.auto svg{width:14px;height:14px;fill:currentColor}
+.auto::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--cy);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.auto .pa{display:none}.auto[aria-pressed=true] .pa{display:block}.auto[aria-pressed=true] .pl{display:none}
+.wt-ctrl{grid-column:1/-1;grid-row:2;display:flex;align-items:center;justify-content:center;gap:10px}
+.wt-ctrl .btn{min-height:46px;padding:0 16px}
+.dots{display:flex}
+.dots button{width:36px;height:46px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0}
+.dots i{width:13px;height:13px;border-radius:50%;border:2px solid rgba(150,200,255,.5);transition:all .25s}
+.dots button.done i{background:rgba(57,230,255,.45);border-color:rgba(57,230,255,.7)}
+.dots button.on i{background:#eaffff;border-color:var(--cy);box-shadow:0 0 14px var(--cy);transform:scale(1.35)}
+@media(max-width:900px){.wt-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr) auto;gap:10px}.wt-fig{grid-column:1;grid-row:1}.wt-cap{grid-column:1;grid-row:2;align-self:stretch;overflow:auto;padding:14px 16px}.wt-ctrl{grid-row:3}.wt-top{margin-bottom:8px}.wt-body p{font-size:15px;margin-bottom:10px}}
+@media(max-width:560px){.wt-ctrl .btn span{display:none}.wt-ctrl .btn{width:50px;padding:0;font-size:22px}.dots button{width:32px}}
+
+/* lab */
+.eq{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.26em;font:italic 500 clamp(21px,3.5vw,40px)/1.15 "STIX Two Text","Cambria Math","Times New Roman",serif;color:#eaffff;text-shadow:0 0 18px rgba(57,230,255,.8),0 0 2px rgba(57,230,255,.9);padding:14px 4px 20px}
+.eq .u{font-style:normal}
+.eq .frac{display:inline-flex;flex-direction:column;align-items:center;font-size:.82em;line-height:1.15}
+.eq .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 .3em .08em}
+.eq .frac>span:last-child{padding:.08em .3em 0}
+.eq .sqrt{display:inline-flex;align-items:stretch}
+.eq .sqrt svg{width:.62em;height:auto;flex:none;overflow:visible;filter:drop-shadow(0 0 5px rgba(57,230,255,.8))}
+.eq .sqrt>span{border-top:2px solid currentColor;padding:.14em .16em 0 .08em}
+.eq .grp{display:inline-flex;align-items:center;gap:.14em}
+.eq sup{font-size:.55em;font-style:normal;align-self:flex-start}
+.eq .bb{font-style:normal;font-weight:400;font-size:1.9em;line-height:1}.eq .bp{font-style:normal;font-weight:400;font-size:1.5em;line-height:1}
+.eq sub{font-size:.6em;font-style:normal}
+.t-i0{color:var(--cy2)}.t-c{color:var(--vi)}.t-i{color:var(--am2)}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.terms div{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(150,190,255,.05);font-size:14.5px;color:#cddbf3}
+.terms b{font:italic 500 19px "STIX Two Text","Times New Roman",serif;margin-right:6px}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+.col{display:grid;gap:18px;align-content:start}
+@media(max-width:900px){.bench{grid-template-columns:minmax(0,1fr);gap:14px}.col{display:contents}.o1{order:1;position:sticky;top:calc(var(--nav) + 8px);z-index:6;background:linear-gradient(180deg,rgba(14,26,56,.97),rgba(8,16,38,.97));padding:12px 16px}.o2{order:2}.o3{order:3}.o4{order:4}}
+.sl{display:grid;gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sl:last-child{border-bottom:0;padding-bottom:0}.sl:first-child{padding-top:0}
+.sl-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sl-h b{font:600 15.5px var(--bd)}
+.sl-h i{font:italic 500 19px "STIX Two Text","Times New Roman",serif;margin-right:4px}
+.sl-h output{font:700 17px var(--mo);white-space:nowrap}
+.sl-r{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:center}
+.nud{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(150,190,255,.07);color:var(--ink);font:600 20px var(--bd);cursor:pointer}
+.nud:hover{border-color:var(--cy)}
+.sl small{color:var(--mut);font-size:13.5px;line-height:1.45}
+.readout{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.readout .big{font:700 clamp(38px,6vw,58px)/1 var(--mo);color:#eaffff;text-shadow:0 0 22px rgba(57,230,255,.8);letter-spacing:-.02em}
+.readout .unit{font:700 20px var(--mo);color:var(--cy2)}
+.readout.bad .big{color:#ffd0d8;text-shadow:0 0 22px rgba(255,82,112,.85)}
+@media(max-width:900px){#fSub{display:none}}
+.readout.good .big{color:#fff;text-shadow:0 0 28px #39e6ff,0 0 6px #fff}
+.meter{position:relative;height:58px;margin-top:8px}
+.meter .trk{position:absolute;left:0;right:0;top:20px;height:8px;border-radius:8px;background:rgba(150,190,255,.16)}
+.meter .cap{position:absolute;left:28.1%;width:43.8%;top:13px;height:22px;border-radius:7px;background:rgba(57,230,255,.13);border:1px dashed rgba(57,230,255,.55)}
+.meter .tg{position:absolute;left:50%;top:6px;width:2px;height:36px;margin-left:-1px;background:var(--cy);box-shadow:0 0 10px var(--cy)}
+.meter .dot{position:absolute;top:15px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--am);box-shadow:0 0 14px var(--am);transform:translateX(-50%);transition:border-color .2s,box-shadow .2s}
+.meter .dot.in{border-color:var(--cy);box-shadow:0 0 18px var(--cy)}
+.meter .lab{position:absolute;top:42px;font:500 11.5px var(--mo);color:var(--mut);transform:translateX(-50%);white-space:nowrap}
+@media(max-width:520px){.meter .lab.far{display:none}}
+.status{padding:16px 18px;border-radius:16px;border:1px solid var(--line);display:grid;gap:10px;justify-items:start}
+.status h3{font-size:18px}
+.status p{margin:0;font-size:15px;color:#d5e3fb}
+.status.warn{border-color:rgba(255,181,46,.55);background:rgba(255,181,46,.07)}
+.status.bad{border-color:rgba(255,82,112,.65);background:rgba(255,82,112,.1)}
+.status.near{border-color:rgba(57,230,255,.5);background:rgba(57,230,255,.06)}
+.status.good{border-color:#39e6ff;background:rgba(57,230,255,.12);box-shadow:0 0 36px -6px rgba(57,230,255,.65)}
+.okbadge{display:inline-flex;align-items:center;gap:10px;font:700 18px/1.25 var(--hd);color:#eaffff}
+.okbadge svg{width:26px;height:26px;flex:none;filter:drop-shadow(0 0 6px var(--cy))}
+.schem{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:520px){.schem{grid-template-columns:minmax(0,1fr)}}
+.schem svg{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line);background:rgba(4,10,24,.62)}
+.schem text{font:500 12.5px var(--bd);fill:#c9d7f0}
+#jjTop,#jjBot{fill:#0d3550;stroke:var(--cy);stroke-width:2}
+#jjOx{fill:rgba(179,190,255,.5);stroke:var(--vi);stroke-width:1.5}
+#jjLead{stroke:var(--am);fill:none;stroke-linecap:round;stroke-dasharray:10 7;animation:dash2 .8s linear infinite}
+#jjArr{fill:var(--am)}
+@keyframes dash2{to{stroke-dashoffset:-17}}
+.pr{fill:var(--cy2);animation:hop 1.6s ease-in-out infinite}
+@keyframes hop{0%,100%{transform:translateY(-15px);opacity:.15}50%{transform:translateY(15px);opacity:1}}
+.broken #jjOx{fill:rgba(255,82,112,.6);stroke:var(--rd)}.broken .pr{display:none}.broken #jjLead{stroke:var(--rd)}.broken #jjArr{fill:var(--rd)}
+#jwPath{fill:none;stroke:var(--cy2);stroke-width:2.5;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(57,230,255,.8))}
+#jwDot{fill:#eaffff;stroke:var(--cy);stroke-width:2.5;filter:drop-shadow(0 0 6px var(--cy))}
+#jwWall{stroke:var(--am);stroke-width:1.5;stroke-dasharray:3 3}
+.sim{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);grid-template-areas:"a g" "b g";gap:16px;align-items:start;margin-top:18px}
+.sim-a{grid-area:a}.sim-b{grid-area:b}.sim-g{grid-area:g;display:grid;gap:16px}
+@media(max-width:900px){.sim{grid-template-columns:minmax(0,1fr);grid-template-areas:"a" "g" "b"}}
+.sim h3{margin-bottom:10px}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.presets .btn{flex-direction:column;gap:1px;padding:8px 8px;min-height:60px;font-size:14px;line-height:1.25;text-align:center}
+.presets .btn small{font:500 12.5px var(--mo);opacity:.9}
+.rd-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.rd-row span:last-child{font:700 14.5px var(--mo);white-space:nowrap}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.sw small{font-size:13px}
+.sw button{position:relative;width:62px;height:34px;border-radius:99px;border:1px solid var(--line);background:rgba(150,190,255,.12);cursor:pointer;flex:none}
+.sw button::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#c9d7f0;transition:transform .2s,background .2s}
+.sw button[aria-checked=true]{background:rgba(57,230,255,.3);border-color:var(--cy)}
+.sw button[aria-checked=true]::after{transform:translateX(28px);background:#eaffff;box-shadow:0 0 12px var(--cy)}
+.spec{position:relative;height:56px;margin-top:12px}
+.spec .ax{position:absolute;left:0;right:0;top:18px;height:6px;border-radius:6px;background:rgba(150,190,255,.16)}
+.spec .win{position:absolute;top:10px;height:22px;border-radius:6px;background:rgba(57,230,255,.2);border:1px solid rgba(57,230,255,.7)}
+.spec .cr{position:absolute;top:8px;width:2px;height:26px;background:#c9d7f0}
+.spec .mk{position:absolute;top:13px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--am);box-shadow:0 0 12px var(--am);transform:translateX(-50%)}
+.spec .mk.in{border-color:var(--cy);box-shadow:0 0 14px var(--cy)}
+.spec span{position:absolute;top:38px;font:500 11.5px var(--mo);color:var(--mut);white-space:nowrap}
+.alert{position:absolute;top:10px;right:10px;display:none;align-items:center;gap:12px;padding:8px 8px 8px 14px;border-radius:14px;border:1px solid var(--rd);background:rgba(60,6,18,.92);box-shadow:0 0 34px -4px rgba(255,82,112,.8);animation:flash 1s ease-in-out infinite}
+.alert.on{display:flex}
+.alert b{font:700 15.5px var(--hd);color:#ffe1e6}
+.alert .btn{min-height:40px;padding:0 14px}
+@keyframes flash{50%{box-shadow:0 0 46px 2px rgba(255,82,112,.95)}}
+
+/* applications */
+.xp{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;margin-top:16px;align-items:stretch}
+@media(max-width:860px){.xp{grid-template-columns:minmax(0,1fr)}}
+.xp svg{width:100%;height:auto;max-height:430px;display:none}
+.xp svg.on{display:block;animation:capin .5s cubic-bezier(.2,.7,.2,1)}
+.nd{cursor:pointer;outline:none}
+.nd circle{fill:#062236;stroke:var(--cy);stroke-width:2.5}
+.nd text{font:700 13px var(--mo);fill:#eaffff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.nd .halo{fill:none;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center;animation:halo 2.2s ease-out infinite}
+@keyframes halo{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+.nd.on circle:not(.halo),.nd:focus-visible circle:not(.halo){fill:var(--cy)}.nd.on text,.nd:focus-visible text{fill:#02131c}
+.car{fill:var(--am2);animation:car 9s linear infinite}
+.car.b{animation-duration:12s;animation-direction:reverse}
+@keyframes car{from{transform:translateX(0)}to{transform:translateX(370px)}}
+.truck{fill:var(--am2);animation:truck 8s linear infinite}
+@keyframes truck{from{transform:translateX(0)}to{transform:translateX(170px)}}
+.apn{margin:14px 0;padding:14px 16px;border-radius:14px;border:1px solid rgba(57,230,255,.5);background:rgba(57,230,255,.07);min-height:112px}
+.apn b{font-family:var(--hd)}
+.apn span{display:block;margin-top:4px;color:#d5e3fb;font-size:15px}
+.aplist{display:grid;gap:8px}
+.aplist button{display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 12px;border-radius:11px;border:1px solid var(--line);background:rgba(150,190,255,.05);color:var(--ink);font:500 14.5px var(--bd);cursor:pointer;text-align:left}
+.aplist button b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--cy);font:700 12.5px var(--mo);flex:none}
+.aplist button[aria-pressed=true]{border-color:var(--cy);background:rgba(57,230,255,.1)}
+.aplist button[aria-pressed=true] b{background:var(--cy);color:#02131c}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font:600 14px var(--bd);color:var(--mut)}
+thead th:last-child{color:var(--cy2)}
+tbody th{font:600 15px var(--bd);white-space:nowrap}
+tbody tr:last-child>*{border-bottom:0}
+td:last-child{background:rgba(57,230,255,.05)}
+@media(max-width:640px){.cmp thead{display:none}.cmp tr{display:block;padding:12px 0;border-bottom:1px solid var(--line)}.cmp th,.cmp td{display:block;border:0;padding:3px 0}.cmp tbody th{font:600 17px var(--hd);white-space:normal}.cmp td::before{content:attr(data-l);display:block;font:600 12.5px var(--bd);color:var(--mut);margin-top:8px}.cmp td:last-child{background:none}.cmp td:last-child::before{color:var(--cy2)}}
+details{border:1px solid var(--line);border-radius:14px;background:rgba(150,190,255,.05);margin-top:10px;overflow:hidden;transition:border-color .25s,background .25s}
+summary{cursor:pointer;list-style:none;padding:16px 52px 16px 18px;font:600 17px/1.3 var(--hd);position:relative;min-height:44px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";position:absolute;right:22px;top:50%;width:11px;height:11px;border-right:2px solid var(--cy);border-bottom:2px solid var(--cy);transform:translateY(-70%) rotate(45deg);transition:transform .25s}
+details[open] summary::after{transform:translateY(-30%) rotate(225deg)}
+details[open]{border-color:rgba(57,230,255,.5);background:rgba(57,230,255,.06)}
+details .ans{padding:0 18px 8px;color:#d5e3fb;animation:capin .4s ease}
+.foot{padding:26px max(5vw,16px) 40px;border-top:1px solid var(--line);color:var(--mut);font-size:13.5px}
+.foot p{max-width:none;margin:0 0 6px}
+.foot a{color:var(--cy2)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}[data-rv]{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gTw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22467f"/><stop offset="1" stop-color="#0b1936"/></linearGradient>
+<linearGradient id="gSo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1838"/><stop offset="1" stop-color="#050b1c"/></linearGradient>
+</defs></svg>
+
+<header>
+  <a class="brand" href="#home" data-go="home" aria-label="Q-Pulse home">
+    <svg viewBox="0 0 36 36" aria-hidden="true"><rect x="16" y="4" width="4" height="28" rx="2" fill="#ffb52e" opacity=".9"/><path d="M2 20c3 0 3-9 6-9s3 14 6 14 2-7 4-7h6c2 0 2-6 4-6s2 8 6 8" fill="none" stroke="#39e6ff" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <b>Q-Pulse</b>
+  </a>
+  <nav id="nav" aria-label="Pages">
+    <a href="#home" data-go="home">Home</a>
+    <a href="#science" data-go="science">The Nobel Science</a>
+    <a href="#walkthrough" data-go="walkthrough">7-Step Walkthrough</a>
+    <a href="#lab" data-go="lab">Circuit &amp; Simulator Lab</a>
+    <a href="#applications" data-go="applications">Applications &amp; FAQ</a>
+  </nav>
+  <a class="pill" id="chipPill" href="#lab" data-go="lab" data-to="sim">Default chip · 5.0000 GHz</a>
+</header>
+<div id="prog" aria-hidden="true"></div>
+<div id="wipe" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<main>
+<!-- ======================= HOME ======================= -->
+<section class="page" id="pg-home">
+  <div class="hero">
+    <div class="hero-copy">
+      <span class="badge"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12.5 5.5 18 10 15.6 14.5 18 13 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Inspired by the 2025 Nobel Prize in Physics<span class="bx"> · Clarke · Devoret · Martinis</span></span></span>
+      <h1>Q-Pulse: Hearing Buildings Whisper Before They Crack</h1>
+      <p class="lead">A superconducting quantum circuit is so sensitive that the faintest outside vibration can disturb it. Q-Pulse turns that weakness into an ultra-early warning sensor for skyscrapers, bridges and underground pipelines, catching micro-cracks long before anyone can see them.</p>
+      <div class="cta">
+        <a class="btn pri" href="#walkthrough" data-go="walkthrough">Watch the 7-step walkthrough</a>
+        <a class="btn sec" href="#lab" data-go="lab">Open the circuit &amp; simulator lab</a>
+      </div>
+    </div>
+    <div class="scene" id="scene">
+      <svg viewBox="0 -44 1200 474" role="img" aria-label="Night skyline with a supertall tower, a suspension bridge and a buried pipeline, each watched by a Q-Pulse sensor">
+        <g class="noise"><path data-y="96" data-wl="300" data-a="30"/><path data-y="168" data-wl="300" data-a="-24"/></g>
+        <text class="lbl" x="1010" y="72" text-anchor="middle">wind and traffic · 1–100 Hz · ignored</text>
+        <g class="bld"><rect x="-420" y="250" width="70" height="80"/><rect x="-330" y="222" width="60" height="108"/><rect x="-250" y="262" width="54" height="68"/><rect x="-170" y="236" width="66" height="94"/><rect x="-80" y="270" width="50" height="60"/><rect x="-10" y="228" width="56" height="102"/><rect x="60" y="240" width="70" height="90"/><rect x="140" y="268" width="54" height="62"/><rect x="204" y="214" width="62" height="116"/><rect x="400" y="236" width="64" height="94"/><rect x="474" y="262" width="50" height="68"/><rect x="662" y="210" width="58" height="120"/><rect x="726" y="258" width="22" height="72"/></g>
+        <rect x="290" y="284" width="84" height="46" rx="4" fill="#0e2145" stroke="rgba(57,230,255,.6)"/>
+        <path d="M332 284V226" stroke="rgba(168,246,255,.8)" stroke-width="2"/>
+        <path class="rx" d="M320 222a16 16 0 0 1 24 0"/><path class="rx" d="M312 214a27 27 0 0 1 40 0"/><path class="rx" d="M304 206a38 38 0 0 1 56 0"/>
+        <polygon points="560,330 571,150 582,150 588,72 597,72 600,22 603,72 612,72 618,150 629,150 640,330" fill="url(#gTw)" stroke="rgba(168,246,255,.55)" stroke-width="1.5"/>
+        <path d="M585 110h30M569 190h62M565 250h70M562 300h76" stroke="rgba(168,246,255,.22)"/>
+        <text class="lbl" x="652" y="128">Supertall tower</text>
+        <rect x="748" y="330" width="2600" height="16" fill="rgba(57,230,255,.07)"/>
+        <rect x="748" y="296" width="2600" height="8" fill="#14294f" stroke="rgba(168,246,255,.4)"/>
+        <rect x="834" y="176" width="12" height="154" fill="#14294f" stroke="rgba(168,246,255,.5)"/><rect x="1074" y="176" width="12" height="154" fill="#14294f" stroke="rgba(168,246,255,.5)"/>
+        <path d="M748 296L840 178Q960 318 1080 178L1249 296" fill="none" stroke="rgba(190,235,255,.7)" stroke-width="2"/>
+        <path d="M870 209V296M900 231V296M930 244V296M960 248V296M990 244V296M1020 231V296M1050 209V296M800 229V296M770 268V296M1110 199V296M1140 220V296M1170 241V296M1200 262V296" stroke="rgba(190,235,255,.35)"/>
+        <text class="lbl" x="960" y="150" text-anchor="middle">Suspension bridge</text>
+        <rect x="-2000" y="330" width="2748" height="100" fill="url(#gSo)"/><rect x="748" y="346" width="2600" height="84" fill="url(#gSo)"/>
+        <path d="M-2000 330H748" stroke="rgba(168,246,255,.4)"/>
+        <rect x="-2000" y="376" width="5400" height="20" fill="#0d2040" stroke="rgba(168,246,255,.5)"/>
+        <path d="M30 373v26M170 373v26M310 373v26M590 373v26M730 373v26M870 373v26M1010 373v26M1150 373v26" stroke="rgba(168,246,255,.4)" stroke-width="3"/>
+        <text class="lbl" x="700" y="420" text-anchor="middle">Buried pipeline</text>
+        <text class="lbl" x="332" y="356" text-anchor="middle">Engineers</text>
+
+        <g class="sys" id="sys-tower">
+          <path class="lnk a" d="M589 262L600 208"/><path class="lnk b" d="M600 193Q470 96 334 222"/>
+          <path class="node" d="M600 193l11 11-11 11-11-11z"/>
+          <g class="hot" data-k="tower" tabindex="0" role="button" aria-label="Start a micro-crack in the tower core">
+            <circle class="rip" cx="589" cy="262" r="10"/><circle class="rip r2" cx="589" cy="262" r="10"/><circle class="rip r3" cx="589" cy="262" r="10"/>
+            <circle class="ring" cx="589" cy="262" r="14"/><path class="crk" d="M584 254l5 6-4 4 6 6"/><circle class="hit" cx="589" cy="262" r="40"/>
+          </g>
+        </g>
+        <g class="sys" id="sys-bridge">
+          <path class="lnk a" d="M900 292Q886 230 846 172"/><path class="lnk b" d="M840 155Q600 20 334 218"/>
+          <path class="node" d="M840 155l11 11-11 11-11-11z"/>
+          <g class="hot" data-k="bridge" tabindex="0" role="button" aria-label="Start a micro-crack at a bridge hanger joint">
+            <circle class="rip" cx="900" cy="296" r="10"/><circle class="rip r2" cx="900" cy="296" r="10"/><circle class="rip r3" cx="900" cy="296" r="10"/>
+            <circle class="ring" cx="900" cy="296" r="14"/><path class="crk" d="M895 288l5 6-4 4 6 6"/><circle class="hit" cx="900" cy="296" r="40"/>
+          </g>
+        </g>
+        <g class="sys" id="sys-pipe">
+          <path d="M520 375V330" stroke="rgba(168,246,255,.6)" stroke-width="2"/>
+          <path class="lnk a" d="M440 386H509"/><path class="lnk b" d="M520 330Q440 300 336 226"/>
+          <path class="node" d="M520 375l11 11-11 11-11-11z"/>
+          <g class="hot" data-k="pipe" tabindex="0" role="button" aria-label="Start a micro-crack in the buried pipeline">
+            <circle class="rip" cx="440" cy="386" r="10"/><circle class="rip r2" cx="440" cy="386" r="10"/><circle class="rip r3" cx="440" cy="386" r="10"/>
+            <circle class="ring" cx="440" cy="386" r="14"/><path class="crk" d="M435 378l5 6-4 4 6 6"/><circle class="hit" cx="440" cy="386" r="40"/>
+          </g>
+        </g>
+      </svg>
+      <div class="hud" id="hud" role="status" aria-live="polite">Tap a glowing amber point to start a micro-crack</div>
+    </div>
+  </div>
+
+  <div class="band"><div class="wrap">
+    <h2 data-rv>From a silent crack to a warning, in three ideas</h2>
+    <div class="grid3">
+      <article class="glass pad idea" data-rv>
+        <svg class="mw" data-w="84,15,am"></svg>
+        <h3>Cracks whisper first</h3>
+        <p>Long before a crack can be seen, it clicks. Each tiny fracture sends an ultrasonic pulse through the concrete or steel, somewhere between 30 kHz and 500 kHz.</p>
+      </article>
+      <article class="glass pad idea" data-rv>
+        <svg class="mw" data-w="22,12,cy"></svg>
+        <h3>A quantum circuit with one exact lock</h3>
+        <p>A super-cooled Josephson-junction chip takes in energy only in exact packets. Ours is tuned to 5.0000 GHz and ignores everything else.</p>
+      </article>
+      <article class="glass pad idea" data-rv>
+        <svg class="mw" data-w="84,13,am;22,7,cy"></svg>
+        <h3>A bridge between the two</h3>
+        <p>Q-Pulse mixes the crack's whisper with a steady 4.9999 GHz carrier. The frequencies add up to 5.0000 GHz, the circuit tunnels, and a voltage spike raises the alarm.</p>
+      </article>
+    </div>
+  </div></div>
+
+  <div class="band statement"><p id="stmt">Quantum computers fight to block every vibration. Q-Pulse listens to them, and hears danger first.</p></div>
+
+  <div class="band"><div class="wrap">
+    <h2 data-rv>Explore the project</h2>
+    <div class="grid4">
+      <a class="glass xcard" href="#science" data-go="science" data-rv>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M3 30c4 0 4-12 8-12s4 12 8 12"/><rect x="22" y="8" width="5" height="32" rx="2"/><path d="M30 27c3 0 3-5 6-5s3 5 6 5 2-3 3-3" opacity=".6"/></svg>
+        <h3>The Nobel Science</h3>
+        <p>Tunnelling, energy packets and the frequency bridge, explained with diagrams you can play with.</p>
+        <span class="go">Open the science →</span>
+      </a>
+      <a class="glass xcard" href="#walkthrough" data-go="walkthrough" data-rv>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 36C16 36 12 14 23 14s8 20 19 20" opacity=".6"/><circle cx="6" cy="36" r="2.6"/><circle cx="13" cy="25" r="2.6"/><circle cx="23" cy="14" r="2.6"/><circle cx="31" cy="26" r="2.6"/><circle cx="42" cy="34" r="2.6"/></svg>
+        <h3>7-Step Visual Walkthrough</h3>
+        <p>Watch a crack's whisper travel from a pillar to an alert on an engineer's screen, one step at a time.</p>
+        <span class="go">Start the walkthrough →</span>
+      </a>
+      <a class="glass xcard" href="#lab" data-go="lab" data-rv>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 13h36M6 24h36M6 35h36"/><circle cx="17" cy="13" r="4" fill="#0a1530"/><circle cx="32" cy="24" r="4" fill="#0a1530"/><circle cx="13" cy="35" r="4" fill="#0a1530"/></svg>
+        <h3>Quantum Circuit &amp; Simulator Lab</h3>
+        <p>Tune your own chip with John Clarke's formula, then test it against wind, trucks and real crack signals.</p>
+        <span class="go">Enter the lab →</span>
+      </a>
+      <a class="glass xcard" href="#applications" data-go="applications" data-rv>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M3 34h42M13 34V11M35 34V11M3 30l10-18q11 22 22 0l10 18"/></svg>
+        <h3>Applications &amp; Judge FAQ</h3>
+        <p>Skyscrapers, bridges and pipelines, a head-to-head with today's sensors, and answers to the tough questions.</p>
+        <span class="go">See the applications →</span>
+      </a>
+    </div>
+  </div></div>
+</section>
+
+<!-- ======================= SCIENCE ======================= -->
+<section class="page" id="pg-science">
+  <div class="band"><div class="wrap two">
+    <div>
+      <span class="badge"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12.5 5.5 18 10 15.6 14.5 18 13 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>2025 Nobel Prize in Physics</span>
+      <h1>The Nobel science behind Q-Pulse</h1>
+      <p class="lead" style="margin-top:16px">In 1984 and 1985, at the University of California, Berkeley, John Clarke, Michel H. Devoret and John M. Martinis ran a series of experiments on a superconducting circuit. They showed that a circuit big enough to hold in your hand can follow the strange rules of quantum physics. Their two discoveries are the two halves of our sensor.</p>
+      <div class="chips"><span class="chip c">Discovery 1 · Macroscopic quantum tunnelling</span><span class="chip c">Discovery 2 · Energy quantisation</span></div>
+    </div>
+    <div class="glass pad" data-rv>
+      <svg class="jx" viewBox="0 0 520 220" role="img" aria-label="A Josephson junction: two superconductors separated by a thin insulating barrier, with paired electrons crossing it in step">
+        <rect x="16" y="40" width="204" height="140" rx="14" fill="rgba(57,230,255,.1)" stroke="#39e6ff" stroke-width="1.5"/>
+        <rect x="300" y="40" width="204" height="140" rx="14" fill="rgba(57,230,255,.1)" stroke="#39e6ff" stroke-width="1.5"/>
+        <g id="cps"></g>
+        <rect x="220" y="40" width="80" height="140" fill="rgba(8,16,36,.62)" stroke="#ffb52e" stroke-width="1.5" stroke-dasharray="6 5"/>
+      </svg>
+      <div class="legend"><span><i style="background:rgba(57,230,255,.35);border:1px solid #39e6ff"></i>Superconductor</span><span><i style="border:1px dashed #ffb52e"></i>Thin insulating barrier</span><span><i style="background:#a8f6ff;border-radius:50%"></i>Paired electrons, moving in step</span></div>
+      <p class="sm mut" style="margin:10px 0 0">The heart of the experiment is a Josephson junction. When the metal is cooled until it superconducts, its electrons pair up and flow with no resistance, right across the barrier.</p>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap two flip">
+    <div data-rv>
+      <div class="chip c tag">Discovery 1</div>
+      <h2>A whole circuit walks through a wall</h2>
+      <p>Roll a ball at a hill without enough energy and it always rolls back. Quantum particles can cheat: sometimes they turn up on the far side, as if they had tunnelled straight through. Before these experiments, that had only been seen for single particles.</p>
+      <p>Inside a superconducting Josephson junction, billions of paired electrons move together and behave like one giant particle: an artificial atom. The laureates showed that this whole circuit tunnels through its energy barrier instead of climbing over it. The proof is electrical. The circuit jumps from zero voltage to a voltage you can measure.</p>
+    </div>
+    <div class="glass pad" data-rv>
+      <div class="seg" role="group" aria-label="What sits in the energy well"><button id="tunC" aria-pressed="false">Classical ball</button><button id="tunQ" aria-pressed="true">Quantum circuit</button></div>
+      <div class="fig" style="margin-top:12px"><canvas id="cvTun" role="img" aria-label="Energy landscape with a wall. The classical ball stays trapped; the quantum circuit tunnels through."></canvas></div>
+      <div class="ctl"><label for="tunTilt"><span>Tilt the landscape (more bias current)</span><output id="tunOut">medium wall</output></label><input type="range" id="tunTilt" min="15" max="80" value="45"></div>
+      <p class="verdict ok" id="tunMsg"></p>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap two">
+    <div data-rv>
+      <div class="chip c tag">Discovery 2</div>
+      <h2>Energy comes in exact packets</h2>
+      <p>The same circuit cannot take in just any amount of energy. Like an atom, it has fixed energy levels, and it only absorbs a microwave whose frequency matches the gap between two of them. Think of a lock that opens for one exact key.</p>
+      <p>The Q-Pulse chip is tuned so that key is 5.0000 GHz. Its lock window is razor thin, 4.99993 to 5.00040 GHz, about one part in ten thousand. Anything outside it bounces off, however strong it is.</p>
+    </div>
+    <div class="glass pad" data-rv>
+      <div class="fig"><canvas id="cvLock" role="img" aria-label="Energy levels in the well. A microwave is absorbed only when its frequency fits the lock."></canvas></div>
+      <div class="ctl"><label for="lockF"><span>Try a microwave key</span><output id="lockOut" class="num">4.9999 GHz</output></label><input type="range" id="lockF" min="-10" max="10" step="1" value="-1"></div>
+      <div class="chips" style="margin-top:4px"><button class="btn sec k" data-key="-1">4.9999 · carrier alone</button><button class="btn sec k" data-key="0">5.0000</button><button class="btn sec k" data-key="6">5.0006</button></div>
+      <p class="verdict" id="lockMsg"></p>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="chip a tag" data-rv>The frequency bridge</div>
+    <h2 data-rv>Turning a whisper into the right key</h2>
+    <div class="two" style="align-items:start">
+      <div data-rv>
+        <p>Here is the problem. A growing micro-crack clicks at ultrasonic frequencies of 30 kHz to 500 kHz. The quantum chip only listens at 5 GHz, about 50,000 times higher.</p>
+        <p>The fix is a trick every radio uses: mixing. Q-Pulse combines the crack's vibration with a steady 4.9999 GHz microwave carrier, and the output is the sum of the two. A 100 kHz crack tone is 0.0001 GHz, so 4.9999 + 0.0001 = 5.0000 GHz, exactly the chip's sweet spot.</p>
+        <p>Wind and traffic shake a building at only 1 Hz to 100 Hz. Added to the carrier they barely move it, so they miss the lock completely.</p>
+      </div>
+      <div class="glass pad" data-rv>
+        <div class="sm mut">Where everything sits, from 1 Hz to 10 GHz</div>
+        <div class="ruler" aria-hidden="true">
+          <div class="ax"></div>
+          <div class="bn" style="left:0;width:20%;background:rgba(255,181,46,.35)"></div>
+          <div class="bn" style="left:44.8%;width:12.2%;background:var(--am)"></div>
+          <div class="bn" style="left:96.4%;width:1.4%;background:var(--cy);box-shadow:0 0 12px var(--cy)"></div>
+          <span class="lb" style="left:0;color:#e5c489">Wind, traffic</span>
+          <span class="lb" style="left:50.9%;transform:translateX(-50%);color:var(--am2)">Crack whispers</span>
+          <span class="lb" style="right:0;color:var(--cy2)">Chip</span>
+          <span class="tk l" style="left:0">1 Hz</span><span class="tk" style="left:30%">1 kHz</span><span class="tk" style="left:60%">1 MHz</span><span class="tk r" style="left:100%">10 GHz</span>
+          <div class="mk" id="mixMk" style="left:50%"></div>
+        </div>
+        <p class="sm mut" style="margin:0">Each step along this ruler is ten times higher in frequency. The white marker follows the slider below.</p>
+      </div>
+    </div>
+    <div class="glass pad" style="margin-top:18px" data-rv>
+      <div class="fig" style="min-height:230px"><canvas id="cvMix" role="img" aria-label="A vibration and the carrier enter the up-converter; the sum travels to the chip's lock."></canvas></div>
+      <div class="ctl"><label for="mixV"><span>Incoming vibration</span><output id="mixOut" class="am">100 kHz</output></label><input type="range" id="mixV" min="0" max="1000" value="877" style="--c:var(--am)"></div>
+      <div class="chips" style="margin-top:4px"><button class="btn amb k" data-mix="10">Wind · 10 Hz</button><button class="btn amb k" data-mix="60">Truck · 60 Hz</button><button class="btn amb k" data-mix="100000">Concrete crack · 100 kHz</button><button class="btn amb k" data-mix="300000">Steel crack · 300 kHz</button></div>
+      <div class="sum" id="mixSum"></div>
+      <p class="verdict" id="mixMsg"></p>
+    </div>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="chip tag" data-rv>The twist</div>
+    <h2 data-rv>A weakness becomes the sensor</h2>
+    <div class="vs">
+      <article class="glass pad" data-rv><h3>Quantum computers: block the vibration</h3><p>A quantum computer's chips are so delicate that outside vibration knocks them out of their quantum state and causes errors. Engineers go to great lengths to shield and isolate them.</p></article>
+      <article class="glass pad" data-rv style="border-color:rgba(57,230,255,.55)"><h3>Q-Pulse: listen to the vibration</h3><p>We want that sensitivity. Q-Pulse feeds one chosen kind of vibration in on purpose, through the frequency bridge, so the only thing that can disturb the chip is the sound of a crack. The same effect that ruins a calculation reveals hidden danger.</p></article>
+    </div>
+    <a class="glass next" href="#walkthrough" data-go="walkthrough" style="margin-top:28px" data-rv><span><span class="mut sm">Next</span><b>See it happen in 7 steps</b></span><span class="ar">→</span></a>
+  </div></div>
+</section>
+
+<!-- ======================= WALKTHROUGH ======================= -->
+<section class="page" id="pg-walkthrough">
+  <div class="wt-track" id="wtTrack">
+    <div class="wt-stage" id="wtStage">
+      <div class="wt-fig"><canvas id="wtCv" role="img" aria-label="Animated diagram: a building pillar connected through a frequency up-converter to a super-cooled quantum sensor chip, its voltage monitor and an early-warning computer"></canvas></div>
+      <div class="wt-cap glass">
+        <div class="wt-top">
+          <h1>7-Step Visual Walkthrough</h1>
+          <button class="btn sec auto" id="wtAuto" aria-pressed="false"><svg class="pl" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z"/></svg><svg class="pa" viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z"/></svg><span>Auto-play</span></button>
+        </div>
+        <div class="wt-body" id="wtBody">
+          <div class="wt-n" id="wtN">Step 1 of 7</div>
+          <h2 id="wtT"></h2>
+          <p id="wtD"></p>
+          <div class="chips" id="wtF"></div>
+        </div>
+        <p class="sm mut wt-tip">Scroll, use the arrow keys, or press Next.</p>
+      </div>
+      <div class="wt-ctrl">
+        <button class="btn sec" id="wtPrev" aria-label="Previous step">‹<span>Previous</span></button>
+        <div class="dots" id="wtDots" role="tablist" aria-label="Steps"></div>
+        <button class="btn pri" id="wtNext" aria-label="Next step"><span>Next</span>›</button>
+      </div>
+    </div>
+  </div>
+  <div class="band"><div class="wrap">
+    <a class="glass next" href="#lab" data-go="lab"><span><span class="mut sm">Next</span><b>Build the chip yourself in the lab</b></span><span class="ar">→</span></a>
+  </div></div>
+</section>
+
+<!-- ======================= LAB ======================= -->
+<section class="page" id="pg-lab">
+  <div class="band" style="padding-bottom:0"><div class="wrap">
+    <h1>Quantum Circuit &amp; Simulator Lab</h1>
+    <p class="lead" style="margin-top:16px">Design a Josephson-junction chip with the formula from John Clarke's Nobel lecture, tune it to 5.0000 GHz, then test it against wind, trucks and real crack signals.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="chip c tag">Part 1 · Formula lab</div>
+    <h2>Build &amp; tune your own quantum circuit</h2>
+    <p>In his 2025 Nobel lecture, John Clarke gave the formula for how fast a current-biased Josephson junction naturally rings: the frequency of small oscillations in its energy well, known as the plasma frequency. That frequency is the key our lock accepts, and the formula tells us how to set it.</p>
+    <div class="glass pad" style="margin-top:18px">
+      <div class="eq" role="math" aria-label="f equals one over two pi, times the square root of two pi I zero over C times Phi zero, times the fourth root of one minus the square of I over I zero">
+        <span>f</span><span class="u">=</span>
+        <span class="frac"><span class="u">1</span><span><span class="u">2</span>π</span></span>
+        <span class="sqrt"><svg viewBox="0 0 14 40" preserveAspectRatio="none" aria-hidden="true"><path d="M1 25l3-2 4 15L13 1.2" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg><span><span class="frac"><span><span class="u">2</span>π <span class="t-i0">I<sub>0</sub></span></span><span><span class="t-c">C</span> <span class="u">Φ</span><sub>0</sub></span></span></span></span>
+        <span class="grp"><span class="bb">[</span><span class="u">1 −</span><span class="bp">(</span><span class="frac"><span class="t-i">I</span><span class="t-i0">I<sub>0</sub></span></span><span class="bp">)</span><sup>2</sup><span class="bb">]</span><sup>1/4</sup></span>
+      </div>
+      <div class="terms">
+        <div><b>f</b>The chip's natural frequency: the one microwave key its lock accepts.</div>
+        <div><b class="t-i0">I<sub>0</sub></b>Critical current, in microamps: the most current the junction can carry with zero resistance.</div>
+        <div><b class="t-c">C</b>Capacitance, in picofarads: how much charge the junction's two plates can store.</div>
+        <div><b class="t-i">I</b>Bias current: the steady current we pump in. It tilts the energy landscape.</div>
+        <div><b style="font-style:normal">Φ<sub>0</sub></b>Magnetic flux quantum, h / 2e ≈ 2.0678 × 10<sup>−15</sup> Wb. A constant of nature.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:22px"><b>Your challenge:</b> move the three sliders until the chip rings at 5.0000 GHz, the frequency a crack signal arrives at. Get within 50 MHz by hand and the bias servo can make the final trim.</p>
+    <div class="bench">
+      <div class="col">
+        <div class="glass pad o2">
+          <div class="sl">
+            <div class="sl-h"><b><i class="t-i0">I<sub>0</sub></i>Critical current</b><output id="oI0" class="cy">6.00 µA</output></div>
+            <div class="sl-r"><button class="nud" data-n="I0" data-d="-1" aria-label="Lower critical current one step">−</button><input type="range" id="sI0" min="1" max="20" step="0.01" value="6" aria-label="Critical current in microamps"><button class="nud" data-n="I0" data-d="1" aria-label="Raise critical current one step">+</button></div>
+            <small>How much current the junction carries with zero resistance. A bigger junction has a bigger I₀ and rings faster.</small>
+          </div>
+          <div class="sl">
+            <div class="sl-h"><b><i class="t-c">C</i>Capacitance</b><output id="oC" style="color:var(--vi)">4.00 pF</output></div>
+            <div class="sl-r"><button class="nud" data-n="C" data-d="-1" aria-label="Lower capacitance one step">−</button><input type="range" id="sC" min="1" max="20" step="0.01" value="4" style="--c:var(--vi)" aria-label="Capacitance in picofarads"><button class="nud" data-n="C" data-d="1" aria-label="Raise capacitance one step">+</button></div>
+            <small>How much charge the junction's plates hold. More capacitance makes the circuit heavier, so it rings slower.</small>
+          </div>
+          <div class="sl">
+            <div class="sl-h"><b><i class="t-i">I / I<sub>0</sub></i>Bias current ratio</b><output id="oS" class="am">0.8000</output></div>
+            <div class="sl-r"><button class="nud" data-n="S" data-d="-1" aria-label="Lower bias ratio one step">−</button><input type="range" id="sS" min="0" max="1.1" step="0.0001" value="0.8" style="--c:var(--am)" aria-label="Bias current as a fraction of the critical current"><button class="nud" data-n="S" data-d="1" aria-label="Raise bias ratio one step">+</button></div>
+            <small>How hard we push current through, as a fraction of I₀. More bias tilts the landscape and lowers the frequency. Past 1, superconductivity breaks. Bias current now: <span class="num am" id="oI">4.800 µA</span></small>
+          </div>
+        </div>
+        <div class="o3"><div class="status" id="labStatus" role="status" aria-live="polite"></div></div>
+      </div>
+      <div class="col">
+        <div class="glass pad o1" id="tune">
+          <div class="sm mut">Live resonant frequency of your chip</div>
+          <div class="readout" id="fRead"><span class="big" id="fOut">8.3229</span><span class="unit">GHz</span></div>
+          <div class="sm mut" id="fSub"></div>
+          <div class="meter" aria-hidden="true"><div class="trk"></div><div class="cap"></div><div class="tg"></div><div class="dot" id="mDot"></div><span class="lab far" style="left:11.6%">−1 GHz</span><span class="lab" style="left:28.1%">−50 MHz</span><span class="lab cy" style="left:50%">5.0000</span><span class="lab" style="left:71.9%">+50 MHz</span><span class="lab far" style="left:88.4%">+1 GHz</span></div>
+        </div>
+        <div class="glass pad o4">
+          <h3 style="margin-bottom:10px">Live junction schematic</h3>
+          <div class="schem">
+            <svg id="jj" viewBox="0 0 300 220" role="img" aria-label="Cross-section of the Josephson junction. It widens with critical current, its insulating gap narrows as capacitance rises, and the arrow thickens with bias current.">
+              <path id="jjLead" d="M150 30V60"/><path id="jjArr" d="M-9-12L0 2 9-12z"/>
+              <path d="M150 162V198" stroke="var(--am)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+              <rect id="jjTop" rx="6"/><rect id="jjOx"/><rect id="jjBot" rx="6"/>
+              <g id="jjPairs"></g>
+              <text id="jjTi" x="10" y="20" style="fill:var(--am2)"></text>
+              <text id="jjTc" x="290" y="20" text-anchor="end" style="fill:var(--vi)"></text>
+              <text id="jjT0" x="150" y="214" text-anchor="middle" style="fill:var(--cy2)"></text>
+            </svg>
+            <svg id="jw" viewBox="0 0 300 220" role="img" aria-label="The energy landscape. More bias tilts it and lowers the wall that traps the circuit.">
+              <text x="12" y="20">Energy landscape</text>
+              <line id="jwWall"/><text id="jwWt" style="fill:var(--am2)"></text>
+              <path id="jwPath"/><circle id="jwDot" r="7"/>
+            </svg>
+          </div>
+          <div class="legend"><span><i style="background:#0d3550;border:1px solid #39e6ff"></i>Superconductor, wider with I₀</span><span><i style="background:rgba(179,190,255,.5)"></i>Insulating gap, thinner as C rises</span><span><i style="background:var(--am)"></i>Bias current and tilt</span></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="band" id="sim"><div class="wrap">
+    <div class="chip a tag">Part 2 · Live test</div>
+    <h2>Vibration &amp; tunnelling simulator</h2>
+    <p>Send real-world vibrations at the chip. Each one is mixed with the 4.9999 GHz carrier first. The circuit tunnels, and the voltage spikes, only when the up-converted signal fits the chip's lock.</p>
+    <div class="sim">
+      <div class="glass pad sim-a">
+        <div class="sm mut">Chip under test</div>
+        <div class="seg" id="chipSeg" role="group" aria-label="Chip under test" style="margin-top:6px"><button data-chip="default" aria-pressed="true">Default chip</button><button data-chip="custom" aria-pressed="false" disabled>My custom circuit</button></div>
+        <p class="sm mut num" id="chipInfo" style="margin:8px 0 14px;white-space:normal"></p>
+        <div class="sm mut">Choose a real-world vibration</div>
+        <div class="presets" id="presets">
+          <button class="btn amb" data-v="10" aria-pressed="true">Calm wind<small>10 Hz</small></button>
+          <button class="btn amb" data-v="60" aria-pressed="false">Heavy passing truck<small>60 Hz</small></button>
+          <button class="btn amb" data-v="100000" aria-pressed="false">Microscopic concrete crack<small>100 kHz</small></button>
+          <button class="btn amb" data-v="300000" aria-pressed="false">Microscopic steel crack<small>300 kHz</small></button>
+        </div>
+      </div>
+      <div class="sim-g">
+        <div class="glass pad">
+          <h3>Tilted-washboard energy barrier</h3>
+          <div class="fig"><canvas id="cvWash" role="img" aria-label="The tilted washboard energy barrier. A glowing wave packet sits in a well and tunnels through the wall only when the incoming signal fits the lock."></canvas></div>
+          <p class="verdict" id="simState" role="status" aria-live="polite"></p>
+        </div>
+        <div class="glass pad">
+          <h3>Live wave monitor</h3>
+          <div class="fig" style="min-height:250px"><canvas id="cvScope" role="img" aria-label="Scrolling monitor: the incoming vibration wave on top, the chip's voltage below."></canvas>
+            <div class="alert" id="simAlert" role="alert"><b>Micro-Crack Detected</b><button class="btn red" id="simReset">Reset</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="glass pad sim-b">
+        <div class="ctl" style="margin-top:0"><label for="sV"><span>Vibration frequency</span><output id="oV" class="am">10 Hz</output></label><input type="range" id="sV" min="0" max="1000" value="175" style="--c:var(--am)"></div>
+        <div class="ctl"><label for="sStr"><span>Vibration strength</span><output id="oStr" class="am">60 %</output></label><input type="range" id="sStr" min="0" max="100" value="60" style="--c:var(--am)"></div>
+        <div class="sw"><span><b>Cryogenic cooling</b><br><small class="mut" id="coolTxt">On · chip held near 0.02 K</small></span><button id="coolSw" role="switch" aria-checked="true" aria-label="Cryogenic cooling"></button></div>
+        <div class="rd-row"><span>Carrier</span><span>4.9999 GHz</span></div>
+        <div class="rd-row"><span>Up-converted signal</span><span id="rUp" class="cy"></span></div>
+        <div class="rd-row"><span>Chip lock window</span><span id="rLock"></span></div>
+        <div class="spec" aria-hidden="true"><div class="ax"></div><div class="win" id="spWin"></div><div class="cr" style="left:7.7%"></div><div class="mk" id="spMk"></div><span style="left:0">carrier</span><span id="spL" class="cy" style="left:48%;transform:translateX(-50%)">lock window</span></div>
+      </div>
+    </div>
+    <a class="glass next" href="#applications" data-go="applications" style="margin-top:28px"><span><span class="mut sm">Next</span><b>Where Q-Pulse would be used</b></span><span class="ar">→</span></a>
+  </div></div>
+</section>
+
+<!-- ======================= APPLICATIONS ======================= -->
+<section class="page" id="pg-applications">
+  <div class="band" style="padding-bottom:0"><div class="wrap">
+    <h1>Where Q-Pulse would stand guard</h1>
+    <p class="lead" style="margin-top:16px">Modern cities rest on structures that are almost impossible to inspect from the inside. These are the places where hearing the first whisper of a crack would matter most.</p>
+  </div></div>
+
+  <div class="band"><div class="wrap">
+    <div class="seg" id="apSeg" role="group" aria-label="Choose a structure"><button data-s="tower" aria-pressed="true">Supertall skyscrapers</button><button data-s="bridge" aria-pressed="false">Suspension bridges</button><button data-s="pipe" aria-pressed="false">Deep pipelines</button></div>
+    <div class="xp">
+      <div class="glass pad">
+        <svg id="sc-tower" class="on" viewBox="0 0 400 300" role="img" aria-label="A supertall tower with four Q-Pulse pickup points">
+          <g class="noise"><path data-y="40" data-wl="60" data-a="9"/><path data-y="72" data-wl="60" data-a="-7"/></g>
+          <path d="M0 270H400" stroke="rgba(168,246,255,.4)"/>
+          <g fill="#0b1730" stroke="rgba(140,190,255,.22)"><rect x="30" y="190" width="50" height="80"/><rect x="90" y="215" width="40" height="55"/><rect x="300" y="170" width="50" height="100"/><rect x="358" y="210" width="34" height="60"/></g>
+          <polygon points="152,270 162,180 170,180 177,100 184,100 189,40 198,40 200,10 202,40 211,40 216,100 223,100 230,180 238,180 248,270" fill="url(#gTw)" stroke="rgba(168,246,255,.6)" stroke-width="1.5"/>
+          <rect x="193" y="46" width="14" height="224" fill="rgba(168,246,255,.13)"/>
+          <path d="M177 100h46M162 180h76" stroke="#ffdc93" stroke-width="3" opacity=".75"/>
+          <g class="nd" data-s="tower" data-i="0" tabindex="0" role="button" aria-label="Pickup 1"><circle class="halo" cx="160" cy="255" r="12"/><circle cx="160" cy="255" r="12"/><text x="160" y="255">1</text></g>
+          <g class="nd" data-s="tower" data-i="1" tabindex="0" role="button" aria-label="Pickup 2"><circle class="halo" cx="238" cy="180" r="12"/><circle cx="238" cy="180" r="12"/><text x="238" y="180">2</text></g>
+          <g class="nd" data-s="tower" data-i="2" tabindex="0" role="button" aria-label="Pickup 3"><circle class="halo" cx="200" cy="140" r="12"/><circle cx="200" cy="140" r="12"/><text x="200" y="140">3</text></g>
+          <g class="nd" data-s="tower" data-i="3" tabindex="0" role="button" aria-label="Pickup 4"><circle class="halo" cx="200" cy="44" r="12"/><circle cx="200" cy="44" r="12"/><text x="200" y="44">4</text></g>
+        </svg>
+        <svg id="sc-bridge" viewBox="0 0 400 300" role="img" aria-label="A suspension bridge with four Q-Pulse pickup points">
+          <rect x="0" y="250" width="400" height="50" fill="rgba(57,230,255,.07)"/>
+          <path d="M0 250H400" stroke="rgba(168,246,255,.3)"/>
+          <rect x="115" y="70" width="10" height="180" fill="#14294f" stroke="rgba(168,246,255,.5)"/><rect x="275" y="70" width="10" height="180" fill="#14294f" stroke="rgba(168,246,255,.5)"/>
+          <path d="M10 200L120 74Q200 214 280 74L390 200" fill="none" stroke="rgba(190,235,255,.75)" stroke-width="2"/>
+          <path d="M140 105V200M160 127V200M180 140V200M200 144V200M220 140V200M240 127V200M260 105V200M50 154V200M85 114V200M315 114V200M350 154V200" stroke="rgba(190,235,255,.35)"/>
+          <rect x="0" y="200" width="400" height="7" fill="#14294f" stroke="rgba(168,246,255,.45)"/>
+          <rect x="0" y="196" width="20" height="24" fill="#0e2145" stroke="rgba(168,246,255,.4)"/><rect x="380" y="196" width="20" height="24" fill="#0e2145" stroke="rgba(168,246,255,.4)"/>
+          <rect class="car" x="10" y="194" width="12" height="6" rx="2"/><rect class="car b" x="14" y="194" width="9" height="6" rx="2"/>
+          <g class="nd" data-s="bridge" data-i="0" tabindex="0" role="button" aria-label="Pickup 1"><circle class="halo" cx="120" cy="70" r="12"/><circle cx="120" cy="70" r="12"/><text x="120" y="70">1</text></g>
+          <g class="nd" data-s="bridge" data-i="1" tabindex="0" role="button" aria-label="Pickup 2"><circle class="halo" cx="200" cy="222" r="12"/><circle cx="200" cy="222" r="12"/><text x="200" y="222">2</text></g>
+          <g class="nd" data-s="bridge" data-i="2" tabindex="0" role="button" aria-label="Pickup 3"><circle class="halo" cx="262" cy="222" r="12"/><circle cx="262" cy="222" r="12"/><text x="262" y="222">3</text></g>
+          <g class="nd" data-s="bridge" data-i="3" tabindex="0" role="button" aria-label="Pickup 4"><circle class="halo" cx="382" cy="234" r="12"/><circle cx="382" cy="234" r="12"/><text x="382" y="234">4</text></g>
+        </svg>
+        <svg id="sc-pipe" viewBox="0 0 400 300" role="img" aria-label="A buried pipeline with four Q-Pulse pickup points">
+          <rect x="0" y="70" width="400" height="230" fill="url(#gSo)"/>
+          <path d="M0 70H400" stroke="rgba(168,246,255,.45)"/>
+          <rect x="240" y="60" width="160" height="10" fill="#14294f" stroke="rgba(168,246,255,.3)"/>
+          <g class="truck"><rect x="240" y="48" width="22" height="11" rx="2"/><rect x="264" y="52" width="8" height="7" rx="1"/></g>
+          <rect x="40" y="38" width="46" height="32" rx="3" fill="#0e2145" stroke="rgba(57,230,255,.6)"/>
+          <path d="M63 70V193" stroke="rgba(168,246,255,.6)" stroke-width="2"/>
+          <path d="M-10 205H150q40 0 60-25t60-25H410" fill="none" stroke="rgba(168,246,255,.6)" stroke-width="24"/>
+          <path d="M-10 205H150q40 0 60-25t60-25H410" fill="none" stroke="#0d2040" stroke-width="20"/>
+          <path class="lnk" style="opacity:.6;stroke:var(--cy)" d="M-10 205H150q40 0 60-25t60-25H410"/>
+          <path d="M30 193v24M110 193v24M330 143v24M380 143v24" stroke="rgba(168,246,255,.6)" stroke-width="3"/>
+          <g class="nd" data-s="pipe" data-i="0" tabindex="0" role="button" aria-label="Pickup 1"><circle class="halo" cx="110" cy="205" r="12"/><circle cx="110" cy="205" r="12"/><text x="110" y="205">1</text></g>
+          <g class="nd" data-s="pipe" data-i="1" tabindex="0" role="button" aria-label="Pickup 2"><circle class="halo" cx="210" cy="180" r="12"/><circle cx="210" cy="180" r="12"/><text x="210" y="180">2</text></g>
+          <g class="nd" data-s="pipe" data-i="2" tabindex="0" role="button" aria-label="Pickup 3"><circle class="halo" cx="330" cy="155" r="12"/><circle cx="330" cy="155" r="12"/><text x="330" y="155">3</text></g>
+          <g class="nd" data-s="pipe" data-i="3" tabindex="0" role="button" aria-label="Pickup 4"><circle class="halo" cx="63" cy="54" r="12"/><circle cx="63" cy="54" r="12"/><text x="63" y="54">4</text></g>
+        </svg>
+      </div>
+      <div class="glass pad">
+        <h3 id="apT"></h3>
+        <p id="apD" style="margin:8px 0 0;color:#cddbf3"></p>
+        <div class="apn" id="apN" role="status" aria-live="polite"></div>
+        <div class="sm mut" style="margin-bottom:8px">Tap a numbered pickup, here or on the picture</div>
+        <div class="aplist" id="apList"></div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="band" style="padding-top:0"><div class="wrap">
+    <h2 data-rv>Head to head with today's sensors</h2>
+    <p data-rv>Engineers already listen for cracks with piezoelectric acoustic sensors. They work, and they are cheap and rugged. Q-Pulse aims at the signals they cannot pick out of the noise.</p>
+    <div class="glass pad" style="margin-top:18px" data-rv>
+      <table class="cmp">
+        <thead><tr><th scope="col"><span class="sm">Compared on</span></th><th scope="col">Traditional piezoelectric sensor</th><th scope="col">Q-Pulse · concept design targets</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Sensitivity</th><td data-l="Traditional piezoelectric sensor">Turns vibration into a tiny voltage. The faintest signals drown in the electrical and thermal noise of the crystal and its amplifier.</td><td data-l="Q-Pulse · design target">Responds to single microwave energy packets of about 3.3 × 10⁻²⁴ joules, the smallest step the circuit can take.</td></tr>
+          <tr><th scope="row">False-alarm filtering</th><td data-l="Traditional piezoelectric sensor">Hears everything in its band. Thresholds, filters and software have to sort cracks from noise afterwards.</td><td data-l="Q-Pulse · design target">Built into the physics. Only a signal inside the lock window is absorbed, so 1–100 Hz wind and traffic never register.</td></tr>
+          <tr><th scope="row">Frequency range</th><td data-l="Traditional piezoelectric sensor">Broadband or resonant pickups, typically somewhere between 20 kHz and 1 MHz.</td><td data-l="Q-Pulse · design target">Tuned to the 30–500 kHz crack band, shifted up to 5.0000 GHz by the carrier.</td></tr>
+          <tr><th scope="row">Early detection time</th><td data-l="Traditional piezoelectric sensor">Raises an alert once crack signals rise above its noise floor and threshold, usually when a crack is already growing.</td><td data-l="Q-Pulse · design target">Aims to catch the first micro-crack whispers. The goal is a warning months before damage is visible.</td></tr>
+          <tr><th scope="row">The trade-off</th><td data-l="Traditional piezoelectric sensor">Works at room temperature, anywhere, at low cost.</td><td data-l="Q-Pulse · design target">The chip must be kept near 0.02 K in a cryostat. That is the main engineering challenge.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div></div>
+
+  <div class="band" style="padding-top:0"><div class="wrap">
+    <h2 data-rv>Judge FAQ: the tough questions</h2>
+    <div id="faq" data-rv>
+      <details name="faq" open>
+        <summary>How does John Clarke's formula let engineers tune the chip?</summary>
+        <div class="ans"><p>The formula says the junction's natural frequency depends on three things we control. The critical current I₀ and the capacitance C are fixed when the chip is made, and they set its top frequency. The bias current I can be changed while the chip is running: more bias tilts the energy landscape and slides the frequency down.</p><p>For example, I₀ = 5 µA and C = 5 pF give 8.77 GHz with no bias. Raising the bias to 94.6% of I₀ brings the chip to exactly 5.0000 GHz. <a href="#lab" data-go="lab">Try it in the lab</a>.</p></div>
+      </details>
+      <details name="faq">
+        <summary>How can a kHz crack trigger a GHz quantum chip?</summary>
+        <div class="ans"><p>By adding frequencies. The up-converter mixes the crack's ultrasonic tone with a steady 4.9999 GHz carrier, and its output contains the sum of the two. A 100 kHz tone is 0.0001 GHz, so the sum is 5.0000 GHz, inside the chip's lock window.</p><p>Radios have shifted signals up and down in frequency this way for about a century. The crack only has to nudge the carrier the last tiny step.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Why doesn't heavy traffic set off false alarms?</summary>
+        <div class="ans"><p>Traffic and wind shake structures at roughly 1 to 100 Hz. Mixed with the carrier, a 60 Hz truck rumble lands at 4.99990006 GHz, almost 30 kHz short of the lock window.</p><p>Energy quantisation means the circuit can only absorb packets of exactly the right size, so a wrong frequency is reflected however strong it is. In the simulator you can turn a truck up to full strength and the chip still sits at zero volts.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Why does the chip need cooling?</summary>
+        <div class="ans"><p>Two reasons. First, the metal only superconducts when it is very cold: below about 1.2 K for aluminium and 9.2 K for niobium.</p><p>Second, heat is random energy. One energy packet at 5 GHz equals the heat energy of just 0.24 K, so the chip has to sit far below that, around 0.02 K. Any warmer and heat would kick the circuit over the wall at random, which would look like false alarms. Switch the cooling off in the simulator to watch the sensor go blind.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Where does the frozen chip sit on a building or a bridge?</summary>
+        <div class="ans"><p>Not inside the concrete. Small ultrasonic pickups are fixed to the structure at room temperature. Cables carry their signals to one cabinet that holds the up-converter and the cryostat with the chip. One cold chip can listen to many pickups in turn.</p></div>
+      </details>
+      <details name="faq">
+        <summary>Is Q-Pulse a finished product?</summary>
+        <div class="ans"><p>No. Q-Pulse is a concept design. The quantum effects it relies on are proven, and they earned the 2025 Nobel Prize in Physics.</p><p>The next steps would be a bench prototype that couples an ultrasonic pickup and a mixer to a real junction, a measurement of how sharp the lock really is, and a compact cooler that can live in an equipment cabinet.</p></div>
+      </details>
+    </div>
+    <a class="glass next" href="#home" data-go="home" style="margin-top:28px" data-rv><span><span class="mut sm">Back to the start</span><b>Q-Pulse home</b></span><span class="ar">→</span></a>
+  </div></div>
+</section>
+</main>
+
+<footer class="foot">
+  <p><b>Q-Pulse</b> is an innovation concept inspired by the 2025 Nobel Prize in Physics. Its performance figures are design targets that follow from the physics, not field measurements. The animations are schematic and not to scale.</p>
+  <p>Sources: <a href="https://www.nobelprize.org/prizes/physics/2025/summary/">NobelPrize.org, Physics 2025</a> · <a href="https://www.nobelprize.org/prizes/physics/2025/popular-information/">Popular science background</a> · <a href="https://www.nobelprize.org/uploads/2025/12/lecture-clarke.pdf">John Clarke's Nobel lecture</a></p>
+</footer>
+<script>
+{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),lerp=(a,b,t)=>a+(b-a)*t,TAU=Math.PI*2;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,DPR=Math.min(window.devicePixelRatio||1,2);
+
+/* ---------- physics: the plasma-frequency formula from John Clarke's Nobel lecture ---------- */
+const PHI0=2.067833848e-15,TARGET=5e9,CARRIER=4.9999e9;
+const f0of=(I0,C)=>Math.sqrt(TAU*I0*1e-6/(C*1e-12*PHI0))/TAU;           // Hz, with I0 in microamps and C in picofarads
+const fof=(I0,C,s)=>s>=1?0:f0of(I0,C)*Math.pow(1-s*s,.25);               // s = I / I0
+const wallOf=s=>s>=1?0:Math.sqrt(1-s*s)-s*Math.acos(s);                  // barrier height as a fraction of the untilted wall
+const inLock=(fUp,fChip)=>fUp>=fChip-70001&&fUp<=fChip+400001;           // lock window: chip at 5.0000 GHz accepts carrier + 30 to 500 kHz
+const fmtG=(f,d=4)=>(f/1e9).toFixed(d);
+const fmtG9=f=>{const p=(f/1e9).toFixed(9).split('.');return p[0]+'.'+p[1].replace(/(\d{3})(?=\d)/g,'$1 ')};
+const fmtHz=v=>v<1e3?(v<10?String(+v.toFixed(1)):Math.round(v))+' Hz':(v<1e5?String(+(v/1e3).toFixed(1)):Math.round(v/1e3))+' kHz';
+const fmtOff=d=>{const a=Math.abs(d);return a>=1e9?(a/1e9).toFixed(2)+' GHz':a>=1e6?(a/1e6).toFixed(a>=1e8?0:1)+' MHz':a>=1e3?(a/1e3).toFixed(a>=1e5?0:1)+' kHz':Math.round(a)+' Hz'};
+const VMAX=5e5,v2x=v=>Math.round(Math.log10(v)/Math.log10(VMAX)*1000),x2v=x=>Number(Math.pow(10,x/1000*Math.log10(VMAX)).toPrecision(3));
+
+/* ---------- state (kept while moving between pages, and remembered in this browser) ---------- */
+const DEF={I0:5,C:5,s:Math.sqrt(1-Math.pow(TARGET/f0of(5,5),4))};
+const S={lab:{I0:6,C:4,s:.8},custom:null,chip:'default',sim:{v:10,str:60,cool:true}};
+const okN=(x,a,b)=>typeof x==='number'&&isFinite(x)&&x>=a&&x<=b;
+try{const j=JSON.parse(localStorage.getItem('qpulse-v1')||'null');
+  if(j&&j.lab&&okN(j.lab.I0,1,20)&&okN(j.lab.C,1,20)&&okN(j.lab.s,0,1.1))S.lab={I0:j.lab.I0,C:j.lab.C,s:j.lab.s};
+  if(j&&j.custom&&okN(j.custom.I0,1,20)&&okN(j.custom.C,1,20)&&okN(j.custom.s,0,.9999)){S.custom={I0:j.custom.I0,C:j.custom.C,s:j.custom.s};if(j.chip==='custom')S.chip='custom'}
+}catch(e){}
+const save=()=>{try{localStorage.setItem('qpulse-v1',JSON.stringify({lab:S.lab,custom:S.custom,chip:S.chip}))}catch(e){}};
+const chipNow=()=>{const c=S.chip==='custom'&&S.custom?S.custom:DEF;return{I0:c.I0,C:c.C,s:c.s,f:fof(c.I0,c.C,c.s),custom:c!==DEF}};
+
+let toastT=0;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2800)}
+
+/* ---------- canvas helpers ---------- */
+function fit(cv){const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return null;const W=Math.round(w*DPR),H=Math.round(h*DPR);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}const c=cv.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,w,h);return[c,w,h]}
+function stroke(c,col,w,a=1,g=1){c.save();c.lineCap=c.lineJoin='round';c.strokeStyle=col;if(g>0){c.globalAlpha=clamp(.13*a*g);c.lineWidth=w*5.5;c.stroke();c.globalAlpha=clamp(.3*a*g);c.lineWidth=w*2.6;c.stroke()}c.globalAlpha=clamp(a);c.lineWidth=w;c.stroke();c.restore()}
+function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function sine(c,x0,y0,x1,y1,amp,wl,ph,env){const dx=x1-x0,dy=y1-y0,len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,n=Math.min(420,Math.max(10,Math.ceil(len/wl*12)));c.beginPath();for(let i=0;i<=n;i++){const q=i/n,o=amp*(env?env(q):1)*Math.sin(TAU*q*len/wl-ph),px=x0+dx*q+nx*o,py=y0+dy*q+ny*o;i?c.lineTo(px,py):c.moveTo(px,py)}}
+function lab(c,str,x,y,o={}){const u=o.u||1,px=(o.px||12.5)*u;c.font=`${o.b||600} ${px}px Inter,system-ui,sans-serif`;c.textAlign=o.al||'center';c.textBaseline='middle';
+  if(o.bg!==0){const m=c.measureText(str).width,p=6*u,bx=o.al==='left'?x-p:o.al==='right'?x-m-p:x-m/2-p;c.fillStyle='rgba(4,10,24,.84)';rr(c,bx,y-px*.82,m+2*p,px*1.64,5*u);c.fill()}
+  c.fillStyle=o.col||'#cfe0fb';c.fillText(str,x,y)}
+
+/* The tilted washboard: U(phi) = -cos(phi) - tilt*phi, drawn with a wave packet, a classical ball, energy levels and incoming microwaves */
+function wb(c,x,y,w,h,o){
+  const u=o.u||1,t=o.t||0,k=clamp(o.tilt,0,1.3),well=k<.995,pm=well?Math.asin(k):Math.PI/2,pt=Math.PI-pm,U=p=>-Math.cos(p)-k*p;
+  const dU=well?U(pt)-U(pm):0;let pa=pm-(o.l||2.3),pb=pm+TAU+(o.r||1.3),lo=1e9,hi=-1e9;
+  if(well){   // zoom on the well: the left wall climbs out of view and the slope beyond the barrier falls away
+    let p=pm;while(p>pa&&U(p)<U(pm)+1.9*dU)p-=.02;pa=Math.max(pa,p-.12);
+    p=pt;while(p<pb&&U(p)>U(pm)-2.3*dU)p+=.02;pb=Math.min(pb,p+.15)}
+  for(let i=0;i<=80;i++){const v=U(lerp(pa,pb,i/80));if(v<lo)lo=v;if(v>hi)hi=v}
+  if(well){hi=Math.min(hi,U(pm)+1.9*dU);lo=Math.max(lo,U(pm)-2.3*dU)}
+  const X=p=>x+(p-pa)/(pb-pa)*w,Y=v=>y+h*.2+(hi-v)/(hi-lo)*h*.72,hot=!!o.hot,A=h*.15,E=l=>U(pm)+l*dU;
+  const turn=(l,dir)=>{let p=pm;const e=E(l);for(let i=0;i<400;i++){p+=dir*.01;if(U(p)>=e)break}return p};
+  const exit=l=>{let p=pt;const e=E(l);for(let i=0;i<600;i++){p+=.01;if(U(p)<=e)break}return p};
+  c.save();c.beginPath();c.rect(x,y,w,h);c.clip();
+  const pts=[];for(let i=0;i<=140;i++){const p=lerp(pa,pb,i/140);pts.push([X(p),Y(U(p))])}
+  const g=c.createLinearGradient(0,y,0,y+h);g.addColorStop(0,hot?'rgba(255,120,80,.24)':'rgba(57,230,255,.22)');g.addColorStop(1,'rgba(57,230,255,0)');
+  c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.lineTo(x+w,y+h*3);c.lineTo(x,y+h*3);c.closePath();c.fillStyle=g;c.fill();
+  c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));stroke(c,hot?'#ff9a6e':'#a8f6ff',2.4*u,1);
+  const hump=(pc,hw,base,amp,al,col)=>{if(amp<.02||al<.02)return;const top=[];for(let i=0;i<=36;i++){const d=(i/36-.5)*2*hw,wob=1+.08*Math.sin(t*7+d*7);top.push([X(pc+d),base-A*amp*wob*Math.exp(-d*d/(hw*hw*.3))])}
+    c.save();const gg=c.createLinearGradient(0,base-A*amp,0,base);gg.addColorStop(0,col);gg.addColorStop(1,hot?'rgba(255,120,80,.05)':'rgba(57,230,255,.05)');c.fillStyle=gg;c.globalAlpha=al*.7;
+    c.beginPath();top.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();c.restore();
+    c.beginPath();top.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));stroke(c,col,2.2*u,al)};
+  const R={X,Y,well,xw:X(pm),yw:Y(U(pm)),xt:X(pt),yt:Y(U(pt)),A,ly:[Y(E(.28)),Y(E(.62))]};
+  if(o.levels&&well){[.28,.62].forEach((l,i)=>{const a=turn(l,-1),b=turn(l,1);c.save();c.setLineDash([5*u,5*u]);c.beginPath();c.moveTo(X(a)-10*u,Y(E(l)));c.lineTo(X(b)+10*u,Y(E(l)));c.strokeStyle=i?'rgba(255,220,147,.9)':'rgba(168,246,255,.8)';c.lineWidth=1.4*u;c.stroke();c.restore()})}
+  const pk=o.pk||{s:'none'};
+  if(well&&pk.s!=='none'){const l=pk.l==null?.28:pk.l,base=Y(E(l)),col=hot?'#ffb089':'#e6fdff',a=turn(l,-1),b=turn(l,1),mid=(a+b)/2,hw=(b-a)/2+.12;
+    if(pk.s==='trap')hump(mid+(pk.j||0),hw,base,1,1,col);
+    else if(pk.s==='tunnel'){const p=clamp(pk.p),pe=exit(l);hump(mid,hw,base,1-p*.94,1,col);hump(pe+.75,.8,base,p,1,col);
+      c.save();c.setLineDash([3*u,6*u]);c.beginPath();c.moveTo(X(b),base);c.lineTo(X(pe),base);c.strokeStyle=col;c.globalAlpha=.75;c.lineWidth=2*u;c.stroke();c.restore();
+      for(let j=0;j<4;j++){const q=(t*.9+j/4)%1;c.beginPath();c.arc(lerp(X(b),X(pe),q),base,3*u,0,TAU);c.fillStyle=col;c.globalAlpha=Math.sin(Math.PI*q);c.fill();c.globalAlpha=1}}
+    else if(pk.s==='run'){const r=clamp(pk.r),p0=exit(l)+.75,al=clamp(r/.15)*(1-clamp((r-.88)/.12));   // out of the well: it rolls down the washboard
+      if(r<.15)hump(p0,.8,base,1,1-r/.15,col);
+      for(let j=5;j>=0;j--){const pj=lerp(p0,pb+.5,Math.pow(Math.max(0,r-j*.03),2)),py=lerp(base-A*.5,Y(U(pj))-9*u,clamp(r*5));c.beginPath();c.arc(X(pj),py,(8-j)*u,0,TAU);c.fillStyle=col;c.globalAlpha=al*(j?.45/j:1);c.fill()}
+      c.globalAlpha=1;const pc=lerp(p0,pb+.5,r*r);c.beginPath();c.arc(X(pc),lerp(base-A*.5,Y(U(pc))-9*u,clamp(r*5)),8*u,0,TAU);stroke(c,hot?'#ff9a6e':'#39e6ff',2*u,al)}
+  }
+  if(o.ball!=null&&well){const p=pm+o.ball,bx=X(p),by=Y(U(p))-9*u;c.beginPath();c.arc(bx,by,8*u,0,TAU);c.fillStyle='#ffdc93';c.fill();stroke(c,'#ffb52e',2*u,1)}
+  if(o.ray&&o.ray.a>0){const r=o.ray,tx=X(pm)-2*u,ty=Y(E(.62))-A*1.25,sx=x+w*.03,sy=y+h*.04,ph=t*10;
+    sine(c,sx,sy,tx,ty,(3+6*r.a)*u,17*u,ph);stroke(c,r.col,1.9*u,.55+.45*r.a);
+    if(r.ok){const q=(t*1.4)%1;c.beginPath();c.arc(tx,ty+A*.6,(8+24*q)*u,0,TAU);stroke(c,'#eaffff',1.6*u,(1-q)*.8)}
+    else{sine(c,tx,ty,tx+w*.2,y+h*.03,(2+5*r.a)*u,17*u,ph);stroke(c,r.col,1.5*u,.4);c.beginPath();c.moveTo(tx-7*u,ty-7*u);c.lineTo(tx+7*u,ty+7*u);c.moveTo(tx+7*u,ty-7*u);c.lineTo(tx-7*u,ty+7*u);stroke(c,'#ff5270',2.4*u,.95)}}
+  c.restore();return R}
+
+/* ---------- pages, routing and scroll ---------- */
+const PAGES=['home','science','walkthrough','lab','applications'],hooks={};
+let cur=null,navTok=0;
+const routeOf=()=>{const h=(location.hash||'').replace('#','');return PAGES.includes(h)?h:'home'};
+function scrollToEl(id){const el=document.getElementById(id);if(!el)return;scrollTo({top:el.getBoundingClientRect().top+scrollY-70,behavior:reduce?'auto':'smooth'})}
+function reveal(){if(!cur)return;$$('#pg-'+cur+' [data-rv]:not(.in)').forEach((e,i)=>{if(reduce||e.getBoundingClientRect().top<innerHeight*.92){e.style.transitionDelay=Math.min(i,5)*70+'ms';e.classList.add('in')}})}
+function onScroll(){const max=document.documentElement.scrollHeight-innerHeight;$('#prog').style.transform=`scaleX(${max>4?clamp(scrollY/max):0})`;reveal();const h=hooks[cur];if(h&&h.scroll)h.scroll()}
+function show(name,to){
+  if(!PAGES.includes(name))name='home';
+  if(name===cur){if(to)scrollToEl(to);return}
+  const my=++navTok,old=cur;cur=name;
+  const nav=$('#nav');$$('a',nav).forEach(a=>{const on=a.dataset.go===name;a.classList.toggle('on',on);if(on){a.setAttribute('aria-current','page');nav.scrollTo({left:a.offsetLeft-(nav.clientWidth-a.offsetWidth)/2,behavior:reduce?'auto':'smooth'})}else a.removeAttribute('aria-current')});
+  const swap=()=>{if(my!==navTok)return;
+    if(old&&hooks[old]&&hooks[old].leave)hooks[old].leave();
+    $$('.page').forEach(p=>p.classList.remove('on','out'));
+    $('#pg-'+name).classList.add('on');scrollTo(0,0);
+    if(hooks[name]&&hooks[name].enter)hooks[name].enter();
+    onScroll();
+    if(to)setTimeout(()=>{if(my===navTok)scrollToEl(to)},420)};
+  if(old&&!reduce){$('#pg-'+old).classList.add('out');const w=$('#wipe');w.classList.remove('go');void w.offsetWidth;w.classList.add('go');setTimeout(swap,180)}else swap();
+}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(!a)return;e.preventDefault();const n=a.dataset.go;show(n,a.dataset.to);try{if(location.hash!=='#'+n)location.hash=n}catch(err){}});
+addEventListener('hashchange',()=>show(routeOf()));
+addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',onScroll);
+
+/* ---------- home ---------- */
+$$('.noise path').forEach(p=>{const y=+p.dataset.y,wl=+p.dataset.wl,a=+p.dataset.a;let d=`M${-5*wl} ${y}q${wl/4} ${-a} ${wl/2} 0`;for(let i=0,n=Math.ceil(4400/(wl/2));i<n;i++)d+=`t${wl/2} 0`;p.setAttribute('d',d)});
+$$('svg.mw').forEach(s=>{s.setAttribute('viewBox','0 0 300 56');s.setAttribute('preserveAspectRatio','none');s.setAttribute('aria-hidden','true');
+  s.innerHTML=s.dataset.w.split(';').map(q=>{const p=q.split(','),W=+p[0],a=+p[1];let d=`M${-W} 28q${W/4} ${-a*2} ${W/2} 0`;for(let x=0;x<300+W;x+=W/2)d+=`t${W/2} 0`;return `<path d="${d}" stroke="var(--${p[2]})" style="--wl:${W}px;animation-duration:${(W/34).toFixed(2)}s"/>`}).join('')});
+const stmt=$('#stmt');stmt.innerHTML=stmt.textContent.trim().split(/\s+/).map(w=>`<span class="w">${w}</span>`).join(' ');
+const stW=$$('.w',stmt);
+function stmtUpd(){const r=stmt.getBoundingClientRect(),p=clamp((innerHeight*.9-r.top)/(r.height+innerHeight*.42));stW.forEach((w,i)=>w.classList.toggle('on',reduce||i/stW.length<p*1.08))}
+const HUDS={
+  tower:['Micro-crack in the tower core: a faint 150 kHz whisper','Mixed with the 4.9999 GHz carrier, it lands inside the 5.0000 GHz lock','The chip tunnels, the voltage spikes, engineers are alerted'],
+  bridge:['Hairline crack at a hanger joint: a 300 kHz click','Mixed with the 4.9999 GHz carrier, it lands inside the 5.0000 GHz lock','The chip tunnels, the voltage spikes, engineers are alerted'],
+  pipe:['Weld micro-crack in the buried pipeline: an 80 kHz ping','Mixed with the 4.9999 GHz carrier, it lands inside the 5.0000 GHz lock','The chip tunnels, the voltage spikes, engineers are alerted']};
+let hudTok=0,userFired=false,autoAt=0;
+function fire(k,user){const s=$('#sys-'+k);if(!s)return;if(user)userFired=true;const my=++hudTok,hud=$('#hud'),sc=$('#scene');
+  $$('.sys').forEach(x=>x.classList.remove('fire'));sc.classList.remove('alert');void s.getBoundingClientRect();s.classList.add('fire');
+  HUDS[k].forEach((m,i)=>setTimeout(()=>{if(my!==hudTok)return;hud.textContent=m;hud.dataset.s=i;if(i===2)sc.classList.add('alert')},i*1150));
+  setTimeout(()=>{if(my===hudTok){s.classList.remove('fire');sc.classList.remove('alert')}},4300)}
+$$('.hot').forEach(h=>{h.addEventListener('click',()=>fire(h.dataset.k,true));h.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fire(h.dataset.k,true)}})});
+hooks.home={enter(){autoAt=performance.now()/1000+2.2},scroll:stmtUpd,
+  tick(t){if(!userFired&&t>autoAt&&scrollY<innerHeight*.5){fire(['tower','pipe','bridge'][Math.floor(t/7)%3],false);autoAt=t+7}}};
+
+/* ---------- the Nobel science ---------- */
+$('#cps').innerHTML=[66,96,126,156].map((y,r)=>[0,1,2].map(j=>`<g class="cp" style="--y:${y}px;animation-delay:${-(j*4.4/3+r*.37).toFixed(2)}s"><path d="M0 0h11" stroke="#a8f6ff" stroke-width="1.5" opacity=".6"/><circle r="4"/><circle cx="11" r="4"/></g>`).join('')).join('');
+const SC={mode:'q',tilt:.45,st:'trap',ts:0,esc:0,key:-1,v:1e5};
+function tunUi(){$('#tunC').setAttribute('aria-pressed',SC.mode==='c');$('#tunQ').setAttribute('aria-pressed',SC.mode==='q');$('#tunOut').textContent=SC.tilt<.32?'tall wall':SC.tilt<.6?'medium wall':'low wall';
+  const m=$('#tunMsg');m.className='verdict '+(SC.mode==='c'?'no':'ok');
+  m.innerHTML=SC.mode==='c'?'<b>Classical ball:</b> it rolls up the wall and back, forever. Without enough energy to climb over, it never gets out.':`<b>Quantum circuit:</b> part of its wave leaks through the wall, and the whole circuit escapes. Tilt the landscape to lower the wall and escapes come faster. Escapes so far: <span class="num">${SC.esc}</span>`}
+$('#tunC').addEventListener('click',()=>{SC.mode='c';tunUi()});
+$('#tunQ').addEventListener('click',()=>{SC.mode='q';SC.st='trap';SC.ts=0;tunUi()});
+$('#tunTilt').addEventListener('input',e=>{SC.tilt=e.target.value/100;tunUi()});
+function lockUi(){const f=TARGET+SC.key*1e5,ok=inLock(f,TARGET);$('#lockF').value=SC.key;$('#lockOut').textContent=fmtG(f)+' GHz';const m=$('#lockMsg');m.className='verdict '+(ok?'ok':'no');
+  m.innerHTML=ok?'<b>The lock opens.</b> This frequency fits the gap between two energy levels, so the circuit absorbs one packet and hops up a level.':'<b>The lock stays shut.</b> '+(SC.key===-1?'The carrier on its own sits just below the window. Nothing happens until a crack adds its tone.':'No pair of energy levels matches this frequency, so the microwave bounces off.')}
+$('#lockF').addEventListener('input',e=>{SC.key=+e.target.value;lockUi()});
+$$('[data-key]').forEach(b=>b.addEventListener('click',()=>{SC.key=+b.dataset.key;lockUi()}));
+function mixUi(){const v=SC.v,f=CARRIER+v,ok=inLock(f,TARGET);$('#mixOut').textContent=fmtHz(v);$('#mixMk').style.left=(Math.log10(v)/10*100)+'%';
+  $('#mixSum').innerHTML=`4.9999 GHz + ${fmtHz(v)} = <span class="${ok?'cy':'am'}">${fmtG9(f)} GHz</span>`;
+  const m=$('#mixMsg');m.className='verdict '+(ok?'ok':'no');
+  m.innerHTML=ok?'<b>Hits the lock.</b> The sum lands inside the 4.99993 to 5.00040 GHz window, so the chip absorbs it.':`<b>Misses the lock</b> by ${fmtOff(f<TARGET?TARGET-7e4-f:f-TARGET-4e5)}. The chip ignores it.`;
+  $$('[data-mix]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.mix===v))}
+$('#mixV').addEventListener('input',e=>{SC.v=x2v(+e.target.value);mixUi()});
+$$('[data-mix]').forEach(b=>b.addEventListener('click',()=>{SC.v=+b.dataset.mix;$('#mixV').value=v2x(SC.v);mixUi()}));
+tunUi();lockUi();mixUi();
+hooks.science={tick(t,dt){
+  let r=fit($('#cvTun'));
+  if(r){const [c,w,h]=r;let pk={s:'none'},ball=null;
+    if(SC.mode==='c'){const pm=Math.asin(SC.tilt);ball=Math.min(.95,(Math.PI-2*pm)*.6)*Math.sin(t*2.6)}
+    else{SC.ts+=dt;const wait=lerp(3.4,.9,(SC.tilt-.15)/.65);
+      if(SC.st==='trap'){pk={s:'trap',l:.3};if(SC.ts>wait){SC.st='tun';SC.ts=0}}
+      else if(SC.st==='tun'){pk={s:'tunnel',l:.3,p:SC.ts/1.3};if(SC.ts>1.3){SC.st='run';SC.ts=0;SC.esc++;tunUi()}}
+      else{pk={s:'run',l:.3,r:SC.ts/1.2};if(SC.ts>1.2){SC.st='trap';SC.ts=0}}}
+    const G=wb(c,6,4,w-12,h-8,{tilt:SC.tilt,t,l:2.2,pk,ball});
+    lab(c,'energy wall',G.xt,G.yt-20);
+    lab(c,SC.mode==='c'?'ball: trapped':SC.st==='trap'?'circuit: trapped':SC.st==='tun'?'tunnelling':'escaped: voltage appears',SC.mode==='q'&&SC.st==='run'?Math.min(w-110,G.xt+90):G.xw,G.yw+24,{col:SC.mode==='c'?'#ffdc93':'#a8f6ff'})}
+  r=fit($('#cvLock'));
+  if(r){const [c,w,h]=r,f=TARGET+SC.key*1e5,ok=inLock(f,TARGET),l=ok?.28+.34*(.5-.5*Math.cos(t*2.4)):.28;
+    const G=wb(c,6,4,w-12,h-8,{tilt:.42,t,l:2.7,levels:true,pk:{s:'trap',l},ray:{a:.9,ok,col:ok?'#eaffff':'#ffb52e'}});
+    const lx=Math.min(w-10,G.xt+150);lab(c,'level 1',lx,G.ly[0]+3,{al:'right',col:'#a8f6ff',px:11.5});lab(c,'level 2',lx,G.ly[1]-5,{al:'right',col:'#ffdc93',px:11.5});
+    lab(c,'key: '+fmtG(f)+' GHz',w-12,20,{al:'right',col:ok?'#eaffff':'#ffdc93'});
+    lab(c,ok?'absorbed':'bounces off',G.xw,G.yw+24,{col:ok?'#a8f6ff':'#ffc7d0'})}
+  r=fit($('#cvMix'));
+  if(r){const [c,w,h]=r,v=SC.v,ok=inLock(CARRIER+v,TARGET),mx=w*.42,my=h*.6,gx=w*.86,wl=lerp(130,20,clamp(Math.log10(v)/5.7));
+    c.beginPath();c.moveTo(8,my);c.lineTo(w-8,my);stroke(c,'rgba(150,200,255,.22)',5,1,0);
+    c.beginPath();c.moveTo(mx,10);c.lineTo(mx,my);stroke(c,'rgba(150,200,255,.22)',5,1,0);
+    sine(c,10,my,mx-30,my,13,wl,t*6);stroke(c,'#ffb52e',2.3,1);
+    sine(c,mx,12,mx,my-30,5,11,t*14);stroke(c,'#39e6ff',1.8,.95);
+    if(ok){sine(c,mx+30,my,w-10,my,9,10,t*15);stroke(c,'#eaffff',2.3,1)}
+    else{sine(c,mx+30,my,gx-9,my,7,10.6,t*14);stroke(c,'#d9b274',2,.95);sine(c,gx-9,my,gx-74,my+50,5,10.6,t*14);stroke(c,'#d9b274',1.6,.45)}
+    c.beginPath();c.arc(mx,my,28,0,TAU);c.fillStyle='#0a1b3a';c.fill();stroke(c,'#39e6ff',2.2,1,1+.4*Math.sin(t*6));
+    c.beginPath();c.moveTo(mx-13,my-13);c.lineTo(mx+13,my+13);c.moveTo(mx+13,my-13);c.lineTo(mx-13,my+13);stroke(c,'#a8f6ff',2.2,.9,0);
+    c.beginPath();c.moveTo(gx,my-48);c.lineTo(gx,my-13);c.moveTo(gx,my+13);c.lineTo(gx,my+48);if(!ok){c.moveTo(gx,my-13);c.lineTo(gx,my+13)}stroke(c,ok?'#39e6ff':'#ff8097',4,1);
+    lab(c,fmtHz(v)+' in',12,my-32,{al:'left',col:'#ffdc93'});
+    lab(c,'4.9999 GHz carrier',mx+12,20,{al:'left',col:'#a8f6ff'});
+    lab(c,'up-converter',mx,my+48);
+    lab(c,ok?'lock: open':'lock: shut',gx,my+66,{col:ok?'#a8f6ff':'#ffc7d0'})}
+}};
+
+/* ---------- applications ---------- */
+const AP={
+  tower:{t:'Supertall skyscrapers',d:'A supertall tower sways in every storm and carries enormous loads through a handful of critical joints. Pickups on those joints would listen around the clock, while the slow wind sway stays far below the lock.',n:[
+    ['Mega-column base','It carries the weight of the whole tower. Fatigue cracks start at welds and anchor zones, deep inside.'],
+    ['Outrigger joint','It ties the core to the outer columns. Stress concentrates here every time the wind pushes.'],
+    ['Core wall','Thick concrete hides cracks in its middle. Their ultrasonic whispers still travel out to the surface.'],
+    ['Spire connection','Wind-driven vibration works on these bolted and welded joints all day long.']]},
+  bridge:{t:'Suspension bridges',d:'A suspension bridge hangs from steel wires and thousands of welded joints, flexing with every lorry. The dangerous cracks start hidden inside cables and sockets, while the traffic rumble above stays at 1 to 100 Hz.',n:[
+    ['Cable saddle','The main cable bends over the tower top here. A broken wire inside the bundle cannot be seen from outside.'],
+    ['Hanger socket','Each hanger ends in a socket that goes through millions of load cycles.'],
+    ['Deck weld','Fatigue cracks in a steel deck begin as micro-cracks at its welds.'],
+    ['Anchorage','The cable wires splay out and are locked into the ground. Hidden cracks here threaten the whole span.']]},
+  pipe:{t:'Deep pipelines',d:'Buried and undersea pipelines cannot be inspected by eye. A crack at a weld can grow for years before anything leaks, so hearing it early is the only warning there is.',n:[
+    ['Girth weld','The ring weld that joins two lengths of pipe: the most common place for a crack to begin.'],
+    ['Pipe bend','Pressure pulses and ground movement concentrate stress where the line changes direction.'],
+    ['Road crossing','Trucks overhead shake the pipe at 1 to 100 Hz. That is exactly the noise Q-Pulse ignores.'],
+    ['Valve station','The cabinet for the up-converter and the cryostat. Pickups along the line report back here.']]}};
+let apS='tower',apI=0;
+function apUi(){const a=AP[apS];$$('#apSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===apS));$$('.xp svg').forEach(s=>s.classList.toggle('on',s.id==='sc-'+apS));
+  $('#apT').textContent=a.t;$('#apD').textContent=a.d;
+  $$('.nd').forEach(n=>{const i=+n.dataset.i,mine=n.dataset.s===apS;n.classList.toggle('on',mine&&i===apI);n.setAttribute('aria-label',`Pickup ${i+1}: ${AP[n.dataset.s].n[i][0]}`)});
+  $('#apN').innerHTML=`<b>${apI+1} · ${a.n[apI][0]}</b><span>${a.n[apI][1]}</span>`;
+  $('#apList').innerHTML=a.n.map((n,i)=>`<button data-i="${i}" aria-pressed="${i===apI}"><b>${i+1}</b>${n[0]}</button>`).join('')}
+$('#apSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;apS=b.dataset.s;apI=0;apUi()});
+$('#apList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;apI=+b.dataset.i;apUi()});
+$$('.nd').forEach(n=>{const go=()=>{apI=+n.dataset.i;apUi()};n.addEventListener('click',go);n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+$$('#faq details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('#faq details').forEach(o=>{if(o!==d)o.open=false})}));
+apUi();
+
+/* ---------- 7-step walkthrough: one world, a camera that follows the story ---------- */
+const WT=(()=>{
+  const cv=$('#wtCv'),track=$('#wtTrack'),stage=$('#wtStage'),dots=$('#wtDots');
+  const ST=[
+    ['The chip sits silent','Inside the cryostat, current flows through the Josephson junction with zero resistance and zero voltage. The whole circuit rests in an energy well, behind an invisible energy wall, while a steady 4.9999 GHz carrier waits just below the 5.0000 GHz lock.',['c|Zero voltage','c|Carrier 4.9999 GHz','c|Lock 5.0000 GHz']],
+    ['A micro-crack is born','Deep inside the concrete or steel, a crack far too small to see snaps open. It sends a faint ultrasonic wave, somewhere between 30 kHz and 500 kHz, rippling through the pillar.',['a|30–500 kHz','a|Invisible to the eye']],
+    ['The whisper is shifted up','The wave travels through the pillar into the frequency up-converter. There it mixes with the carrier and the two frequencies add: 4.9999 GHz + 100 kHz = 5.0000 GHz.',['a|100 kHz','c|+ 4.9999 GHz','c|= 5.0000 GHz']],
+    ['Everyday noise bounces off','Wind and passing cars shake the building too, but only at 1 to 100 Hz. After mixing they are still stuck at about 4.9999 GHz: the wrong key. Energy quantisation makes the chip ignore them, while the exact 5.0000 GHz signal is absorbed.',['a|1–100 Hz: ignored','c|5.0000 GHz: absorbed']],
+    ['The circuit tunnels','Billions of paired electrons, acting as one, absorb that exact energy packet. Instead of climbing over the energy wall, they tunnel straight through it.',['c|One exact energy packet','c|Quantum tunnelling']],
+    ['Zero volts becomes a spike','The instant it tunnels, the circuit snaps out of its zero-voltage state. A clear, measurable voltage appears across the junction: an unmistakable electrical click.',['r|0 V → voltage spike']],
+    ['Engineers get the warning','A connected computer reads the voltage jump, identifies the pillar and alerts the engineers. The goal is a warning months before any damage can be seen.',['r|Alert sent','c|Repair planned early']]];
+  // what each step must show: x, y, w, h of the core view, then where the core sits when the view has to grow
+  const CORE=[[860,130,900,720,.85,.5],[40,300,470,520,.35,.5],[330,250,520,420,.3,.5],[650,140,530,640,.5,.5],[1225,105,530,380,.75,.2],[930,470,830,250,.5,.6],[1220,500,570,480,.6,.5]];
+  let step=-1,ts=0,cam=null,auto=false,autoT=0;
+  dots.innerHTML=ST.map((s,i)=>`<button role="tab" aria-label="Step ${i+1}: ${s[0]}" data-i="${i}"><i></i></button>`).join('');
+  const frame=(k,asp)=>{let x=k[0],y=k[1],w=k[2],h=k[3];x-=w*.03;y-=h*.03;w*=1.06;h*=1.06;if(w/h<asp){const nw=h*asp;x-=(nw-w)*k[4];w=nw}else{const nh=w/asp;y-=(nh-h)*k[5];h=nh}return[x,y,w,h]};
+  function set(i,force){if(i===step&&!force)return;step=i;ts=0;autoT=0;const s=ST[i];
+    $('#wtN').textContent=`Step ${i+1} of 7`;$('#wtT').textContent=s[0];$('#wtD').textContent=s[1];
+    $('#wtF').innerHTML=s[2].map(f=>{const p=f.split('|');return `<span class="chip ${p[0]}">${p[1]}</span>`}).join('');
+    $$('button',dots).forEach((b,j)=>{b.classList.toggle('on',j===i);b.classList.toggle('done',j<i);b.setAttribute('aria-selected',j===i)});
+    $('#wtPrev').disabled=i===0;$('#wtNext').disabled=i===6;
+    const b=$('#wtBody');b.classList.remove('swp');void b.offsetWidth;b.classList.add('swp')}
+  const seg=()=>(track.offsetHeight-stage.offsetHeight)/7;
+  const top=()=>track.getBoundingClientRect().top+scrollY-$('header').offsetHeight;
+  function scroll(){const L=seg();if(L>0)set(clamp(Math.floor((scrollY-top())/L),0,6))}
+  function goTo(i){i=clamp(i,0,6);scrollTo({top:top()+(i?(i+.5)*seg():0),behavior:reduce?'auto':'smooth'})}
+  function setAuto(v){auto=v;autoT=0;const b=$('#wtAuto');b.setAttribute('aria-pressed',v);$('span',b).textContent=v?'Pause':'Auto-play';b.style.setProperty('--p',0);if(v&&step===6)goTo(0)}
+  $('#wtPrev').addEventListener('click',()=>goTo(step-1));
+  $('#wtNext').addEventListener('click',()=>goTo(step+1));
+  $('#wtAuto').addEventListener('click',()=>setAuto(!auto));
+  dots.addEventListener('click',e=>{const b=e.target.closest('button');if(b)goTo(+b.dataset.i)});
+  addEventListener('keydown',e=>{if(cur!=='walkthrough'||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='ArrowRight'){e.preventDefault();goTo(step+1)}if(e.key==='ArrowLeft'){e.preventDefault();goTo(step-1)}});
+
+  function draw(t,dt){
+    if(auto){autoT+=dt;$('#wtAuto').style.setProperty('--p',clamp(autoT/7));if(autoT>=7){autoT=0;if(step<6)goTo(step+1);else setAuto(false)}}
+    const r=fit(cv);if(!r)return;const c=r[0],W=r[1],H=r[2];ts+=dt;const s=step<0?0:step;
+    const tg=frame(CORE[s],W/H);if(!cam)cam=tg;else{const k=reduce?1:1-Math.exp(-dt*4);for(let i=0;i<4;i++)cam[i]+=(tg[i]-cam[i])*k}
+    const sc=Math.min(W/cam[2],H/cam[3]),u=1/sc,ox=(W-cam[2]*sc)/2-cam[0]*sc,oy=(H-cam[3]*sc)/2-cam[1]*sc;
+    c.setTransform(DPR*sc,0,0,DPR*sc,DPR*ox,DPR*oy);
+    const tx=(str,x,y,o={})=>lab(c,str,x,y,Object.assign({u,px:12},o));
+    const ln=(a,b,d,e,col,w,al=1,g=0)=>{c.beginPath();c.moveTo(a,b);c.lineTo(d,e);stroke(c,col,w*u,al,g)};
+    // blueprint grid across whatever the camera sees
+    const vx0=-ox/sc,vx1=(W-ox)/sc,vy0=-oy/sc,vy1=(H-oy)/sc;
+    c.strokeStyle='rgba(140,190,255,.055)';c.lineWidth=u;c.beginPath();
+    for(let x=Math.floor(vx0/100)*100;x<vx1;x+=100){c.moveTo(x,vy0);c.lineTo(x,vy1)}
+    for(let y=Math.floor(vy0/100)*100;y<vy1;y+=100){c.moveTo(vx0,y);c.lineTo(vx1,y)}c.stroke();
+
+    const tt=ts%6.4,tt6=ts%5.5,volt=s===6||(s===5&&tt6>1.35),absorbing=s===3||s===4;
+    // ---- building pillar ----
+    ln(-600,860,860,860,'rgba(150,200,255,.4)',2);
+    c.fillStyle='rgba(120,160,255,.05)';c.fillRect(420,640,90,220);c.fillRect(-120,560,150,300);c.fillRect(520,730,70,130);
+    c.fillStyle='#0f1d3d';rr(c,30,100,500,50,8);c.fill();stroke(c,'rgba(150,200,255,.4)',1.5*u,1,0);
+    let g=c.createLinearGradient(100,0,360,0);g.addColorStop(0,'#15244a');g.addColorStop(.5,'#213768');g.addColorStop(1,'#131f3f');
+    c.fillStyle=g;c.fillRect(100,150,260,710);
+    c.strokeStyle='rgba(150,200,255,.1)';c.lineWidth=3*u;c.beginPath();[150,205,255,310].forEach(x=>{c.moveTo(x,150);c.lineTo(x,860)});for(let y=230;y<860;y+=105){c.moveTo(100,y);c.lineTo(360,y)}c.stroke();
+    c.beginPath();c.rect(100,150,260,710);stroke(c,'rgba(170,215,255,.55)',2*u,1,0);
+    const CX=215,CY=610,grow=s===1?clamp(ts/1.8):s>1?1:0,emit=s===1?clamp((ts-1)/1.2):s>1?1:0;
+    if(emit>0){c.save();c.beginPath();c.rect(100,150,260,710);c.clip();for(let i=0;i<4;i++){const q=(t*.45+i/4)%1;c.beginPath();c.arc(CX,CY,14+q*340,0,TAU);stroke(c,'#ffb52e',2.4*u,(1-q)*.8*emit)}c.restore()}
+    if(grow>0){const P=[[-30,-42],[-12,-24],[-20,-6],[2,6],[-6,22],[14,36],[6,56]],n=(P.length-1)*grow;c.beginPath();c.moveTo(CX+P[0][0],CY+P[0][1]);for(let i=1;i<=Math.ceil(n);i++){const f=Math.min(1,n-(i-1)),a=P[i-1],b=P[i];c.lineTo(CX+lerp(a[0],b[0],f),CY+lerp(a[1],b[1],f))}stroke(c,'#fff3d6',2.6*u,1)}
+    rr(c,360,528,26,64,6);c.fillStyle='#08283a';c.fill();stroke(c,'#39e6ff',2*u,1,emit>0?.7+.4*Math.sin(t*8):.25);
+
+    // ---- cryostat body (the chip is drawn after the signals that reach it) ----
+    g=c.createLinearGradient(0,280,0,840);g.addColorStop(0,'#123463');g.addColorStop(1,'#0a1836');
+    rr(c,880,300,280,540,28);c.fillStyle=g;c.fill();stroke(c,'#7fe9ff',2*u,.85,.5);
+    rr(c,896,316,248,508,18);c.strokeStyle='rgba(190,245,255,.16)';c.lineWidth=1.5*u;c.stroke();
+    rr(c,905,276,230,30,10);c.fillStyle='#17396b';c.fill();stroke(c,'#7fe9ff',1.5*u,.6,0);
+    for(let i=0;i<14;i++){const tw=.3+.3*Math.sin(t*1.5+i);c.fillStyle=`rgba(200,245,255,${tw*.5})`;c.fillRect(902+((i*67)%236),372+((i*131)%440),3,3)}
+
+    // ---- waveguide, carrier and up-converter ----
+    ln(386,560,654,560,'rgba(150,200,255,.28)',6);
+    const trav=s===2?clamp(ts/1.2):s>2?1:0;
+    if(s===3){sine(c,388,560,652,560,16,175,t*4);stroke(c,'#d9b274',2.2*u,.8,.5)}
+    if(trav>0){sine(c,388,560,388+264*trav,560,12,42,t*10);stroke(c,'#ffb52e',2.4*u,1)}
+    rr(c,615,290,170,80,12);c.fillStyle='rgba(8,22,48,.96)';c.fill();stroke(c,'#39e6ff',1.6*u,.9,.5);
+    sine(c,700,372,700,512,6,15,t*16);stroke(c,'#39e6ff',1.8*u,.9);
+    const mixOn=s>2||(s===2&&trav>=1);
+    c.beginPath();c.arc(700,560,46,0,TAU);c.fillStyle='#0a1b3a';c.fill();stroke(c,mixOn?'#eaffff':'#39e6ff',2.2*u,1,mixOn?1+.5*Math.sin(t*6):.5);
+    c.beginPath();c.moveTo(678,538);c.lineTo(722,582);c.moveTo(722,538);c.lineTo(678,582);stroke(c,'#a8f6ff',2.4*u,.9,0);
+    ln(746,560,945,560,'rgba(150,200,255,.28)',6);
+    const out=s===2?clamp((ts-1.2)/1):s>2?1:0;
+    if(out<1){sine(c,748,560,943,560,5,15,t*16);stroke(c,'#39e6ff',1.5*u,.55,0)}
+    if(out>0){sine(c,748,560,748+195*out,560,10,14.6,t*17,q=>.72+.28*Math.sin(q*10-t*5));stroke(c,'#eaffff',2.4*u,1)}
+
+    // ---- the chip ----
+    rr(c,945,485,150,150,14);c.fillStyle='#061430';c.fill();stroke(c,volt?'#ff8097':'#39e6ff',2.2*u,1,absorbing?1.5+.5*Math.sin(t*7):1);
+    rr(c,978,518,84,84,10);stroke(c,'rgba(168,246,255,.75)',2*u,1,0);
+    c.fillStyle='#061430';c.fillRect(1050,548,24,24);c.beginPath();c.moveTo(1052,550);c.lineTo(1072,570);c.moveTo(1072,550);c.lineTo(1052,570);stroke(c,'#ffdc93',2.2*u,1,0);
+    const pos=d=>{d=((d%336)+336)%336;return d<84?[978+d,518]:d<168?[1062,518+d-84]:d<252?[1062-(d-168),602]:[978,602-(d-252)]};
+    for(let i=0;i<6;i++){const d=t*70+i*56;c.beginPath();if(!volt){const a=pos(d),b=pos(d+9);c.fillStyle='#a8f6ff';c.arc(a[0],a[1],3.4,0,TAU);c.moveTo(b[0]+3.4,b[1]);c.arc(b[0],b[1],3.4,0,TAU)}else{const a=pos(d*.3+Math.sin(t*9+i)*8);c.fillStyle='#ff8097';c.arc(a[0]+Math.sin(t*23+i*2)*4,a[1]+Math.cos(t*19+i)*4,3.4,0,TAU)}c.fill()}
+    rr(c,955,656,130,46,8);c.fillStyle='rgba(4,10,24,.9)';c.fill();stroke(c,volt?'#ff5270':'rgba(57,230,255,.7)',1.5*u,1,volt?1:0);
+    if(s===3){let hitA=0;   // everyday noise arrives, finds no matching energy level and bounces off
+      for(let i=0;i<4;i++){const q=(ts*.36+i/4)%1;let px,py,al;if(q<.55){px=lerp(774,908,q/.55);py=604;al=clamp(q*12)}else{const a=(q-.55)/.45;px=lerp(908,806,a);py=lerp(604,700,a);al=1-a;hitA=Math.max(hitA,1-a*4)}
+        sine(c,px-36,py,px+36,py,11,48,-t*4,z=>Math.sin(Math.PI*z));stroke(c,'#e5c489',2.4*u,al*.95,.6)}
+      if(hitA>0){c.beginPath();c.moveTo(930,592);c.lineTo(954,616);c.moveTo(954,592);c.lineTo(930,616);stroke(c,'#ff5270',3.2*u,hitA)}}
+
+    // ---- gauge: what frequency is reaching the chip ----
+    rr(c,880,150,280,104,12);c.fillStyle='rgba(8,18,40,.92)';c.fill();stroke(c,'rgba(150,200,255,.35)',1.3*u,1,0);
+    ln(905,206,1135,206,'rgba(150,200,255,.5)',2);ln(1095,190,1095,222,'#39e6ff',2.5,1,1);ln(1010,196,1010,216,'rgba(168,246,255,.6)',1.5);
+    const locked=s>2||(s===2&&out>=1),gx=lerp(1010,1095,s<2?0:s===2?out:1);
+    c.beginPath();c.arc(gx,206,7,0,TAU);c.fillStyle=locked?'#eaffff':'#ffb52e';c.fill();c.beginPath();c.arc(gx,206,7,0,TAU);stroke(c,locked?'#39e6ff':'#ffb52e',2*u,1);
+    if(s===3){c.beginPath();c.arc(1011.5,206,5,0,TAU);c.fillStyle=`rgba(217,178,116,${.5+.5*Math.sin(t*14)})`;c.fill()}
+
+    // ---- magnifier: the energy landscape inside the chip ----
+    c.strokeStyle='rgba(150,200,255,.22)';c.lineWidth=1.5*u;c.beginPath();c.moveTo(1095,497);c.lineTo(1240,136);c.moveTo(1095,623);c.lineTo(1240,454);c.stroke();
+    rr(c,1240,120,500,350,18);c.fillStyle='rgba(6,14,32,.95)';c.fill();stroke(c,'rgba(150,200,255,.4)',1.4*u,1,0);
+    let pk,ray=null;
+    if(s<3)pk={s:'trap',l:.28};
+    else if(s===3){pk={s:'trap',l:.28+.1*(.5+.5*Math.sin(t*3))};ray={a:.8,ok:true,col:'#eaffff'}}
+    else if(s===4){if(tt<1.6){pk={s:'trap',l:lerp(.28,.62,clamp(tt/1.4))};ray={a:1,ok:true,col:'#eaffff'}}else if(tt<3.8)pk={s:'tunnel',l:.62,p:(tt-1.6)/2.2};else if(tt<5.6)pk={s:'run',l:.62,r:(tt-3.8)/1.8};else pk={s:'none'}}
+    else if(s===5&&tt6<1.35)pk={s:'tunnel',l:.62,p:tt6/1.35};
+    else pk={s:'run',l:.62,r:s===5?clamp((tt6-1.35)/1.6):(t*.45)%1};
+    const G=wb(c,1262,172,456,282,{u,tilt:.45,t,l:2.6,levels:s>=3,pk,ray});
+
+    // ---- voltage monitor ----
+    ln(1160,610,1240,610,'rgba(150,200,255,.3)',4);
+    rr(c,1240,520,500,180,18);c.fillStyle='rgba(6,14,32,.95)';c.fill();stroke(c,volt?'#ff5270':'rgba(150,200,255,.4)',1.4*u,1,volt?.8:0);
+    const x0=1270,x1=1710,y0=666,y1=590,edge=.42;
+    c.save();c.setLineDash([6*u,8*u]);c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y0);c.strokeStyle='rgba(150,200,255,.3)';c.lineWidth=1.2*u;c.stroke();c.restore();
+    const V=q=>q<edge?0:1+.28*Math.exp(-(q-edge)*26)*Math.cos((q-edge)*85);
+    const trace=(a,b,f,col)=>{c.beginPath();for(let i=0;i<=120;i++){const q=lerp(a,b,i/120),yy=lerp(y0,y1,f(q))+Math.sin(i*1.7+t*20)*1.1;i?c.lineTo(lerp(x0,x1,q),yy):c.moveTo(lerp(x0,x1,q),yy)}stroke(c,col,2.4*u,1)};
+    if(s<5)trace(0,1,()=>0,'#39e6ff');
+    else if(s===5){const pen=clamp(tt6/3.2);trace(0,Math.min(pen,edge),()=>0,'#39e6ff');if(pen>edge)trace(edge,pen,V,'#ff8097')}
+    else trace(0,1,()=>1,'#ff8097');
+
+    // ---- early-warning computer ----
+    ln(1490,700,1490,740,'rgba(150,200,255,.3)',4);
+    rr(c,1300,740,380,190,14);c.fillStyle='#07132c';c.fill();stroke(c,s===6?'#ff5270':'rgba(150,200,255,.5)',2*u,1,s===6?1:0);
+    c.fillStyle='#0f1d3d';c.fillRect(1470,930,40,24);c.fillRect(1420,954,140,8);
+    if(s===6){rr(c,1318,758,344,60,10);c.fillStyle='rgba(255,82,112,.2)';c.fill();stroke(c,'#ff5270',2*u,1,.8+.4*Math.sin(t*8));
+      for(let i=0;i<3;i++){const q=(t*.7+i/3)%1;c.beginPath();c.arc(1672,820,14+q*44,-.6,.6);stroke(c,'#ff8097',2.2*u,1-q)}
+      rr(c,1722,772,54,96,10);c.fillStyle='#0a1836';c.fill();stroke(c,'#ff8097',1.8*u,1);c.beginPath();c.arc(1749,804,8,0,TAU);c.fillStyle='#ff5270';c.fill();c.fillStyle='rgba(255,193,204,.6)';c.fillRect(1734,826,30,4);c.fillRect(1734,838,22,4)}
+    else{c.beginPath();c.arc(1334,780,7,0,TAU);c.fillStyle=volt?'#ffb52e':'#39e6ff';c.fill();ln(1326,880,1654,880,volt?'rgba(255,181,46,.6)':'rgba(57,230,255,.45)',2)}
+
+    // ---- labels ----
+    const sm=sc<.5,px=sm?10.5:12;   // compact wording when the picture is small
+    tx('Building pillar',280,125,{bg:0});
+    if(s!==1){tx(sm?'4.9999 GHz':'Carrier · 4.9999 GHz',700,330,{bg:0,col:'#a8f6ff',px});tx('Up-converter',700,632,{px})}
+    tx(sm?'Cryostat':'Cryostat · 0.02 K',1020,340,{bg:0,col:'#c9f3ff',px});
+    tx(sm?'lock 5.0000':'lock: 5.0000 GHz',1146,172,{bg:0,al:'right',col:'#a8f6ff',px});
+    tx(locked?(sm?'now 5.0000':'now: 5.0000 GHz'):(sm?'now 4.9999':'now: 4.9999 GHz'),sm?894:1020,238,{bg:0,al:sm?'left':'center',col:locked?'#eaffff':'#ffdc93',px});
+    tx(volt?'V > 0':'V = 0',1020,679,{bg:0,col:volt?'#ff9db0':'#a8f6ff',b:700,px});
+    tx(sm?'Inside the chip':'Inside the chip: the energy landscape',1262,146,{al:'left',bg:0,px});
+    tx(sm?'Junction voltage':'Voltage across the junction',1262,546,{al:'left',bg:0,px});
+    if(s===0){tx('zero resistance',1020,458,{col:'#a8f6ff',px});tx('energy wall',G.xt,G.yt-18*u);tx('circuit rests here',G.xw,G.yw+22*u,{col:'#a8f6ff'})}
+    if(s===1||s===2)tx('pickup',373,506,{col:'#a8f6ff'});
+    if(s===1){if(grow>.6)tx('micro-crack',CX,CY+92,{col:'#ffdc93'});if(emit>.5)tx('ultrasonic wave · 30–500 kHz',230,395,{col:'#ffdc93'})}
+    if(s===2){tx('crack tone · 100 kHz',520,522,{col:'#ffdc93'});if(out>.5)tx('+ carrier = 5.0000 GHz',700,668,{col:'#eaffff'})}
+    if(s===3){tx('wind and traffic · 1–100 Hz: bounce off',800,748,{col:'#e5c489',px});tx(sm?'5.0000: absorbed':'5.0000 GHz: absorbed',1020,458,{col:'#eaffff',px})}
+    if(s===4&&tt<5.6)tx(tt<1.6?'absorbs one energy packet':tt<3.8?'tunnels through the wall':'out: the circuit is free',G.xt+16*u,G.yt-36*u,{col:'#eaffff'});
+    if(s>=5){tx('0 V',x0+4,y0-16*u,{al:'left',bg:0,col:'#a8f6ff'});if(volt)tx('voltage spike',x1-6,y1+26*u,{al:'right',col:'#ff9db0'})}
+    if(s===6){tx('MICRO-CRACK DETECTED',1490,788,{bg:0,col:'#ffe1e6',b:700,px:13});tx('Pillar B-7 · engineers alerted',1490,856,{bg:0,col:'#ffc1cc'});tx('early warning sent',1490,896,{bg:0,col:'#9db0cf'})}
+    else tx(volt?'Voltage jump: reading…':'Monitoring: all quiet',1354,780,{al:'left',bg:0,col:volt?'#ffdc93':'#a8f6ff'});
+  }
+  hooks.walkthrough={enter(){cam=null;set(0,true);scroll()},leave(){if(auto)setAuto(false)},scroll,tick:draw};
+  return{goTo}})();
+
+/* ---------- formula lab ---------- */
+const sI0=$('#sI0'),sC=$('#sC'),sS=$('#sS');let trim=0,jwG=null;
+const tv=s=>s<.985?.75*Math.pow(s,1.5):s<1?lerp(.733,1,(s-.985)/.015):1+(s-1)*2;   // drawing tilt: keeps the wall visible until I reaches I0
+$('#jjPairs').innerHTML='<circle class="pr" r="3"/>'.repeat(8);
+sI0.value=S.lab.I0;sC.value=S.lab.C;sS.value=S.lab.s.toFixed(4);trim=S.lab.s-(+sS.value);
+const setA=(id,a)=>{const e=$(id);for(const k in a)e.setAttribute(k,a[k])};
+function pill(){$('#chipPill').textContent=S.custom?(S.chip==='custom'?'My circuit in simulator · 5.0000 GHz':'My circuit saved · 5.0000 GHz'):'Default chip · 5.0000 GHz'}
+function labRender(){
+  const I0=+sI0.value,C=+sC.value,s=+sS.value+trim,f0=f0of(I0,C),broken=s>=1,f=fof(I0,C,s),d=f-TARGET,cal=!broken&&Math.abs(d)<=25e3,near=!broken&&!cal&&Math.abs(d)<=5e7;
+  S.lab={I0,C,s};save();
+  $('#oI0').textContent=I0.toFixed(2)+' µA';$('#oC').textContent=C.toFixed(2)+' pF';$('#oS').textContent=s.toFixed(trim?6:4);$('#oI').textContent=(I0*s).toFixed(3)+' µA';
+  $('#fOut').textContent=broken?'– – –':fmtG(f);$('#fRead').className='readout'+(broken?' bad':cal?' good':'');
+  const wl=wallOf(s)*100;
+  $('#fSub').innerHTML=`Top speed with zero bias <b class="num">${fmtG(f0,3)} GHz</b> · energy wall at <b class="num">${broken?'0':wl<10?wl.toFixed(1):wl.toFixed(0)} %</b> of its full height`;
+  const m=broken?-1:Math.sign(d)*Math.log10(1+Math.abs(d)/1e6)/Math.log10(8001),dot=$('#mDot');dot.style.left=clamp(50+50*m,1.5,98.5)+'%';dot.classList.toggle('in',cal||near);
+  const st=$('#labStatus');let cls,html;
+  if(broken){cls='bad';html=`<h3>Superconductivity broken</h3><p>The bias current (${(I0*s).toFixed(2)} µA) is now larger than the critical current I₀ (${I0.toFixed(2)} µA). The junction can no longer carry it without resistance: the energy wells vanish and the circuit slides into its voltage state. Bring I / I₀ back below 1.</p>`}
+  else if(cal){cls='good';html=`<div class="okbadge"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="#39e6ff" stroke-width="2"/><path d="M7.5 13.5l3.8 3.8 7.4-8" fill="none" stroke="#eaffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Circuit Calibrated &amp; Ready to Detect Cracks!</div><p>Your chip rings at <b class="num">${fmtG(f)} GHz</b> with I₀ = ${I0.toFixed(2)} µA, C = ${C.toFixed(2)} pF and I / I₀ = ${s.toFixed(4)}. A crack tone added to the 4.9999 GHz carrier now lands on its lock.</p><button class="btn pri" id="loadBtn">Load My Custom Circuit into Simulator</button>`}
+  else if(f0<TARGET){cls='warn';html=`<h3>This junction is too slow</h3><p>Even with zero bias it tops out at ${fmtG(f0,3)} GHz, and bias current can only lower the frequency. Raise I₀ or lower C until its top speed is above 5 GHz.</p>`}
+  else if(near){cls='near';html=`<h3>Inside the fine-lock range</h3><p>You are ${fmtOff(d)} ${d>0?'above':'below'} the 5.0000 GHz target. Let the bias servo make the last hair-width trim, or keep nudging by hand.</p><button class="btn pri" id="lockBtn">Fine-lock the bias onto 5.0000 GHz</button>`}
+  else{cls='warn';html=`<h3>Missing the crack-detection window</h3><p>${fmtOff(d)} too ${d>0?'high':'low'}. ${d>0?'Raise the bias ratio to tilt the landscape, add capacitance, or reduce I₀.':'Ease off the bias ratio, raise I₀, or reduce the capacitance.'} Get within 50 MHz of 5.0000 GHz and the fine-lock takes over.</p>`}
+  const key=cls+'|'+html;if(st.dataset.k!==key){st.dataset.k=key;st.className='status '+cls;st.innerHTML=html}
+  // junction cross-section
+  const wE=70+(I0-1)/19*150,x=150-wE/2,tO=22-(C-1)/19*17,yB=128,yO=yB-tO,yT=yO-34;
+  setA('#jjBot',{x,y:yB,width:wE,height:34});setA('#jjOx',{x:x+4,y:yO,width:wE-8,height:tO});setA('#jjTop',{x,y:yT,width:wE,height:34});
+  $('#jjLead').setAttribute('d',`M150 30V${yT-12}`);$('#jjLead').style.strokeWidth=2+6*Math.min(s,1.1);$('#jjArr').setAttribute('transform',`translate(150 ${yT-2}) scale(${.8+.5*Math.min(s,1.1)})`);
+  $$('.pr').forEach((p,i)=>{p.setAttribute('cx',x+wE*((i>>1)+.5)/4+(i&1?4:-4));p.setAttribute('cy',yO+tO/2)});
+  $('#jj').classList.toggle('broken',broken);
+  $('#jjTi').textContent=`bias I = ${(I0*s).toFixed(2)} µA`;$('#jjTc').textContent=`C = ${C.toFixed(2)} pF`;$('#jjT0').textContent=broken?'resistive: superconductivity lost':`I₀ = ${I0.toFixed(2)} µA`;
+  // energy landscape
+  const k=tv(s),well=k<.999,pm=well?Math.asin(k):Math.PI/2,pt=Math.PI-pm,U=p=>-Math.cos(p)-k*p,pa=pm-2.3,pb=pm+TAU+1.1;let lo=1e9,hi=-1e9;
+  for(let i=0;i<=60;i++){const v=U(lerp(pa,pb,i/60));lo=Math.min(lo,v);hi=Math.max(hi,v)}
+  const X=p=>14+(p-pa)/(pb-pa)*272,Y=v=>44+(hi-v)/(hi-lo)*150;let dd='';
+  for(let i=0;i<=90;i++){const p=lerp(pa,pb,i/90);dd+=(i?'L':'M')+X(p).toFixed(1)+' '+Y(U(p)).toFixed(1)}
+  $('#jwPath').setAttribute('d',dd);jwG={well,pm,pt,U,pa,pb,X,Y};
+  const hW=well?Y(U(pm))-Y(U(pt)):0;
+  setA('#jwWall',{x1:X(pt),x2:X(pt),y1:Y(U(pt)),y2:Y(U(pm)),opacity:hW>4?1:0});
+  setA('#jwWt',{x:Math.min(X(pt)+8,232),y:Y(U(pt))-10});$('#jwWt').textContent=broken?'no wall left':hW>4?'wall':'wall almost gone';
+}
+function labTick(t){const g=jwG;if(!g)return;const f=fof(S.lab.I0,S.lab.C,S.lab.s);let p;
+  if(g.well){const a=Math.min(.34,(g.pt-g.pm)*.38);p=g.pm+a*Math.sin(t*TAU*clamp(f/1e9*.36,.25,5))}else p=g.pa+((t*2.6)%(g.pb-g.pa));
+  setA('#jwDot',{cx:g.X(p).toFixed(1),cy:(g.Y(g.U(p))-9).toFixed(1)})}
+function fineLock(){const f0=f0of(+sI0.value,+sC.value);if(f0<TARGET)return;const sT=Math.sqrt(1-Math.pow(TARGET/f0,4));sS.value=sT.toFixed(4);trim=sT-(+sS.value);labRender();toast('Bias servo locked: I / I₀ = '+sT.toFixed(6))}
+function loadCustom(){const L=S.lab;S.custom={I0:L.I0,C:L.C,s:L.s};S.chip='custom';save();pill();simUi();simReset();toast('Custom circuit loaded into the simulator');scrollToEl('sim')}
+[sI0,sC,sS].forEach(e=>e.addEventListener('input',()=>{if(e===sS)trim=0;labRender()}));
+$$('.nud').forEach(b=>b.addEventListener('click',()=>{const e={I0:sI0,C:sC,S:sS}[b.dataset.n];if(e===sS)trim=0;+b.dataset.d>0?e.stepUp():e.stepDown();labRender()}));
+$('#labStatus').addEventListener('click',e=>{if(e.target.closest('#lockBtn'))fineLock();if(e.target.closest('#loadBtn'))loadCustom()});
+
+/* ---------- vibration and tunnelling simulator ---------- */
+const sV=$('#sV'),sStr=$('#sStr'),NS=420,vb=new Float32Array(NS),vv=new Float32Array(NS);
+let simSt='idle',simT=0,hd=0,acc=0,ph=0,simKey='';
+function simUi(){const ch=chipNow(),v=S.sim.v,fUp=CARRIER+v,ok=inLock(fUp,ch.f);
+  $$('#chipSeg button').forEach(b=>{if(b.dataset.chip==='custom')b.disabled=!S.custom;b.setAttribute('aria-pressed',b.dataset.chip===S.chip)});
+  $('#chipInfo').textContent=`I₀ ${ch.I0.toFixed(2)} µA · C ${ch.C.toFixed(2)} pF · I/I₀ ${ch.s.toFixed(4)} · f ${fmtG(ch.f)} GHz`;
+  $$('#presets button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===v));
+  $('#oV').textContent=fmtHz(v);$('#oStr').textContent=S.sim.str+' %';
+  $('#coolSw').setAttribute('aria-checked',S.sim.cool);$('#coolTxt').textContent=S.sim.cool?'On · chip held near 0.02 K':'Off · chip warming up';
+  $('#rUp').textContent=fmtG9(fUp)+' GHz';$('#rUp').className=ok?'cy':'am';
+  $('#rLock').textContent=fmtG(ch.f-7e4,5)+' – '+fmtG(ch.f+4e5,5);
+  const pos=f=>clamp((f-(CARRIER-5e4))/6.5e5*100,0,100);
+  $('#spWin').style.left=pos(ch.f-7e4)+'%';$('#spWin').style.width=(pos(ch.f+4e5)-pos(ch.f-7e4))+'%';
+  $('#spMk').style.left=pos(fUp)+'%';$('#spMk').classList.toggle('in',ok)}
+function simMsg(){const ch=chipNow(),v=S.sim.v,fUp=CARRIER+v,ok=inLock(fUp,ch.f),lo=ch.f-7e4,key=simSt+ok+v+S.sim.str+S.sim.cool+S.chip;if(key===simKey)return;simKey=key;
+  const e=$('#simState');let cls='no',h;
+  if(simSt==='blind'){cls='bad';h='<b>Cooling is off.</b> The chip is too warm to superconduct, so there is no quantum lock at all. Heat shakes the circuit over the wall at random and the sensor is blind.'}
+  else if(simSt==='det'){cls='bad';h=`<b>Tunnelled.</b> The ${fmtHz(v)} signal fitted the lock, the circuit passed through the wall and the voltage jumped. Press Reset to re-arm the chip.`}
+  else if(simSt==='tun'){cls='ok';h='<b>Tunnelling.</b> The wave packet is passing straight through the energy wall.'}
+  else if(simSt==='abs'){cls='ok';h=`<b>The key fits.</b> ${fmtG9(fUp)} GHz is inside the lock window, and the circuit is absorbing energy packets.`}
+  else if(S.sim.str===0)h='<b>No vibration.</b> Nothing but the carrier reaches the chip. It rests at zero volts.';
+  else if(ok){cls='ok';h='<b>The key fits.</b> Signal arriving inside the lock window.'}
+  else h=`<b>Wrong key.</b> ${fmtHz(v)} lands at ${fmtG9(fUp)} GHz, ${fmtOff(fUp<lo?lo-fUp:fUp-ch.f-4e5)} outside the lock. It bounces off and the chip stays at zero volts, however strong it is.`;
+  e.className='verdict '+cls;e.innerHTML=h;$('#simAlert').classList.toggle('on',simSt==='det')}
+function simReset(){if(simSt!=='blind')simSt='idle';simT=0;simMsg()}
+sV.addEventListener('input',()=>{S.sim.v=x2v(+sV.value);simUi()});
+sStr.addEventListener('input',()=>{S.sim.str=+sStr.value;simUi()});
+$('#presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.sim.v=+b.dataset.v;sV.value=v2x(S.sim.v);if(S.sim.str<5){S.sim.str=60;sStr.value=60}simUi()});
+$('#coolSw').addEventListener('click',()=>{S.sim.cool=!S.sim.cool;simUi()});
+$('#chipSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;S.chip=b.dataset.chip;save();pill();simUi();simReset()});
+$('#simReset').addEventListener('click',simReset);
+function simTick(t,dt){
+  const ch=chipNow(),v=S.sim.v,str=S.sim.str/100,ok=inLock(CARRIER+v,ch.f)&&str>0;
+  if(!S.sim.cool)simSt='blind';
+  else{if(simSt==='blind'){simSt='idle';simT=0}
+    simT+=dt;
+    if(simSt==='idle'){if(ok&&simT>.45){simSt='abs';simT=0}}
+    else if(simSt==='abs'){if(!ok){simSt='idle';simT=0}else if(simT>lerp(2.8,.7,str)){simSt='tun';simT=0}}
+    else if(simSt==='tun'){if(simT>1){simSt='det';simT=0}}}
+  simMsg();
+  // scope history, sampled 100 times a second
+  acc+=dt;const fvis=.5+2.3*Math.log10(Math.max(1,v));
+  while(acc>=.01){acc-=.01;ph+=TAU*fvis*.01;vb[hd]=str*Math.sin(ph);
+    vv[hd]=simSt==='blind'?.3+.22*Math.sin(ph*.31)+(Math.random()-.5)*.5:simSt==='det'?1+.3*Math.exp(-simT*9)*Math.cos(simT*42)+(Math.random()-.5)*.03:(Math.random()-.5)*.025;
+    hd=(hd+1)%NS}
+  let r=fit($('#cvWash'));
+  if(r){const c=r[0],w=r[1],h=r[2];let pk,ray=null;const hot=simSt==='blind';
+    if(hot){const q=t%2.4;pk=q<1.3?{s:'trap',l:.34,j:.22*Math.sin(t*31)+.16*Math.sin(t*17)}:{s:'run',l:.6,r:(q-1.3)/1.1}}
+    else if(simSt==='idle'){pk={s:'trap',l:.28};if(str>0)ray={a:str,ok,col:ok?'#eaffff':'#d9b274'}}
+    else if(simSt==='abs'){pk={s:'trap',l:lerp(.28,.62,clamp(simT/lerp(2.8,.7,str)))};ray={a:str,ok:true,col:'#eaffff'}}
+    else if(simSt==='tun')pk={s:'tunnel',l:.62,p:simT};
+    else{pk={s:'run',l:.62,r:(simT*.55)%1};if(ok)ray={a:str,ok:true,col:'#eaffff'}}
+    const G=wb(c,6,4,w-12,h-8,{tilt:.26+.2*Math.min(ch.s,1),t,l:2.6,levels:!hot,hot,pk,ray});
+    if(G.well)lab(c,'energy wall',G.xt,G.yt-20,{col:hot?'#ffc7b0':'#cfe0fb'});
+    lab(c,hot?'too warm: random hops':simSt==='det'?'running downhill: voltage!':simSt==='tun'?'tunnelling':simSt==='abs'?'absorbing':'trapped: 0 V',simSt==='det'?Math.min(w-110,G.xt+110):G.xw,G.yw+24,{col:hot||simSt==='det'?'#ffc7d0':'#a8f6ff'});
+    if(str>0&&!hot)lab(c,fmtG(CARRIER+v,5)+' GHz in',w-12,20,{al:'right',col:ok?'#eaffff':'#e5c489'})}
+  r=fit($('#cvScope'));
+  if(r){const c=r[0],w=r[1],h=r[2],yA=h*.27,aA=h*.16,y0=h*.88,y1=h*.57;
+    c.strokeStyle='rgba(150,200,255,.07)';c.lineWidth=1;c.beginPath();for(let x=.5;x<w;x+=40){c.moveTo(x,0);c.lineTo(x,h)}for(let y=.5;y<h;y+=40){c.moveTo(0,y);c.lineTo(w,y)}c.stroke();
+    c.beginPath();for(let i=0;i<NS;i++){const x=i/(NS-1)*w,y=yA-vb[(hd+i)%NS]*aA;i?c.lineTo(x,y):c.moveTo(x,y)}stroke(c,'#ffb52e',2,1);
+    c.save();c.setLineDash([4,6]);c.beginPath();c.moveTo(0,y0);c.lineTo(w,y0);c.strokeStyle='rgba(150,200,255,.32)';c.lineWidth=1;c.stroke();c.restore();
+    c.beginPath();for(let i=0;i<NS;i++){const x=i/(NS-1)*w,y=lerp(y0,y1,vv[(hd+i)%NS]);i?c.lineTo(x,y):c.moveTo(x,y)}stroke(c,simSt==='det'?'#ff8097':simSt==='blind'?'#ff9a6e':'#39e6ff',2.2,1);
+    lab(c,'Incoming vibration · '+fmtHz(v),10,16,{al:'left',col:'#ffdc93',px:12});
+    lab(c,'Chip voltage',10,h*.5,{al:'left',col:simSt==='det'?'#ffc7d0':'#a8f6ff',px:12});
+    lab(c,'0 V',w-10,y0-13,{al:'right',bg:0,col:'#9db0cf',px:11.5})}
+}
+hooks.lab={enter(){labRender();simUi();simKey='';simMsg()},tick(t,dt){labTick(t);simTick(t,dt)}};
+
+/* ---------- start ---------- */
+sV.value=v2x(S.sim.v);sStr.value=S.sim.str;
+labRender();pill();simUi();simMsg();
+let lastT=performance.now();
+function loop(now){const t=now/1000,dt=Math.min(.05,Math.max(0,(now-lastT)/1000));lastT=now;const h=hooks[cur];if(h&&h.tick){try{h.tick(t,dt)}catch(err){console.error(err)}}requestAnimationFrame(loop)}
+show(routeOf());
+requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
